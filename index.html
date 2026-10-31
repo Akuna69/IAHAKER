@@ -3,43 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER.COM - Acceso Social</title>
+    <title>IAHAKER.COM - Panel de IA</title>
     <style>
         body { background-color: #030305; color: #e1e1e6; font-family: monospace; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 30px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
+        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
         h2 { color: #a78bfa; margin-bottom: 5px; font-size: 20px; }
-        p { color: #888; font-size: 12px; margin-bottom: 25px; }
+        p { color: #888; font-size: 12px; margin-bottom: 20px; }
         .btn-social { width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 13px; text-decoration: none; }
         .btn-google { background: #ffffff; color: #000; }
         .btn-telegram { background: #229ed9; color: #fff; }
         .btn-facebook { background: #1877f2; color: #fff; }
+        
+        /* Estilos del Chat de IA */
+        #chat-container { display: none; text-align: left; }
+        #chat-box { height: 220px; overflow-y: auto; background: #030305; border: 1px solid #2d2d3d; border-radius: 6px; padding: 10px; margin-bottom: 10px; font-size: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .msg-ia { background: #1e1b4b; color: #c4b5fd; padding: 8px 10px; border-radius: 6px; max-width: 85%; }
+        .msg-user { background: #3b82f6; color: #fff; padding: 8px 10px; border-radius: 6px; max-width: 85%; align-self: flex-end; }
+        .chat-input-area { display: flex; gap: 6px; }
+        .chat-input-area input { flex: 1; background: #030305; border: 1px solid #7c3aed; color: #fff; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 12px; }
+        .chat-input-area button { background: #7c3aed; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="auth-card" id="auth-box">
-        <h2>IAHAKER.COM</h2>
-        <p>Inicia sesión o regístrate</p>
+    <div class="auth-card" id="main-card">
+        <!-- SECCIÓN DE LOGIN SOCIAL -->
+        <div id="login-section">
+            <h2>IAHAKER.COM</h2>
+            <p>Inicia sesión o regístrate</p>
 
-        <button onclick="socialLogin('Google')" class="btn-social btn-google">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Continuar con Google
-        </button>
+            <button onclick="socialLogin('Google')" class="btn-social btn-google">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Continuar con Google
+            </button>
 
-        <button onclick="socialLogin('Telegram')" class="btn-social btn-telegram">
-            <img src="https://www.svgrepo.com/show/475700/telegram.svg" width="18" height="18"> Continuar con Telegram
-        </button>
+            <button onclick="socialLogin('Telegram')" class="btn-social btn-telegram">
+                <img src="https://www.svgrepo.com/show/475700/telegram.svg" width="18" height="18"> Continuar con Telegram
+            </button>
 
-        <button onclick="socialLogin('Facebook')" class="btn-social btn-facebook">
-            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" height="18"> Continuar con Facebook
-        </button>
+            <button onclick="socialLogin('Facebook')" class="btn-social btn-facebook">
+                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" height="18"> Continuar con Facebook
+            </button>
+        </div>
+
+        <!-- SECCIÓN DEL CHAT DE IA (Oculta hasta iniciar sesión) -->
+        <div id="chat-container">
+            <h2 style="font-size: 16px; margin-bottom: 2px;">IAHAKER.COM // IA</h2>
+            <p id="user-status" style="margin-bottom: 10px; color: #22c55e;"></p>
+            
+            <div id="chat-box">
+                <div class="msg-ia">¡Hola Yerandys! Núcleo IA en línea. Pregúntame sobre Termux, Meen Wallet, scripts o desarrollo Android.</div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Escribe tu consulta técnica..." onkeypress="if(event.key === 'Enter') sendQuery()">
+                <button onclick="sendQuery()">Enviar</button>
+            </div>
+        </div>
     </div>
 
     <script>
         function socialLogin(provider) {
-            alert("Autenticación con " + provider + " exitosa.");
             localStorage.setItem("iahaker_auth", "true");
-            document.getElementById("auth-box").innerHTML = "<h2 style='color: #22c55e;'>¡Bienvenido al sistema!</h2><p style='color: #aaa;'>Conectado mediante " + provider + "</p>";
+            localStorage.setItem("iahaker_provider", provider);
+            showChat(provider);
         }
+
+        function showChat(provider) {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("chat-container").style.display = "block";
+            document.getElementById("user-status").innerText = "Conectado vía " + provider;
+        }
+
+        function getAIResponse(txt) {
+            txt = txt.toLowerCase();
+            if (txt.includes("muun") || txt.includes("meen") || txt.includes("wallet") || txt.includes("cripto")) {
+                return "Meen Wallet es tu proyecto enfocado en la gestión segura y recuperación de criptomonedas (meen-wallet-Beta, fast-recovery, phoenix-resurrect).";
+            } else if (txt.includes("termux") || txt.includes("linux") || txt.includes("kali") || txt.includes("comando")) {
+                return "Entorno Termux activo en Android 15 con Snapdragon 8 y 12 GB RAM. Configurado con prompt KALI >$ y aliases personalizados (ILLUMINATTI, r).";
+            } else if (txt.includes("github") || txt.includes("repo") || txt.includes("vercel")) {
+                return "Tus repositorios están enlazados en Akuna69 e Iluminti, listos para automatizaciones y despliegues web.";
+            } else {
+                return "Análisis completado para: "" + txt + "". Como IA de IAHAKER.COM, estoy lista para ayudarte con código, terminal Linux y ciberseguridad.";
+            }
+        }
+
+        function sendQuery() {
+            const input = document.getElementById("user-input");
+            const box = document.getElementById("chat-box");
+            const text = input.value.trim();
+            if(!text) return;
+
+            // Mensaje usuario
+            box.innerHTML += `<div class="msg-user">${text}</div>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+
+            // Respuesta IA
+            setTimeout(() => {
+                const reply = getAIResponse(text);
+                box.innerHTML += `<div class="msg-ia">${reply}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 400);
+        }
+
+        // Mantener sesión activa si ya entró antes
+        window.addEventListener("DOMContentLoaded", () => {
+            if(localStorage.getItem("iahaker_auth") === "true") {
+                const prov = localStorage.getItem("iahaker_provider") || "Social";
+                showChat(prov);
+            }
+        });
     </script>
 </body>
 </html>

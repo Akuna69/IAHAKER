@@ -3,43 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER.COM - Universal AI Core & Terminal Base</title>
+    <title>IAHAKER.COM - Client Portal & AI Core</title>
     <style>
-        body { background-color: #050508; color: #e1e1e6; font-family: monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-        header { border-bottom: 1px solid #7c3aed; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { color: #a78bfa; font-size: 14px; margin: 0; }
-        .chat-container { flex: 1; display: flex; flex-direction: column; background: #0b0c10; border: 1px solid #1f2231; border-radius: 8px; padding: 10px; overflow: hidden; box-shadow: inset 0 0 15px rgba(124, 58, 237, 0.15); }
+        body { background-color: #050508; color: #e1e1e6; font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        header { border-bottom: 1px solid #7c3aed; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: #0b0c10; }
+        h1 { color: #a78bfa; font-size: 15px; margin: 0; }
+        
+        /* AUTH SCREEN */
+        #auth-screen { display: flex; flex: 1; justify-content: center; align-items: center; padding: 15px; }
+        .auth-card { background: #0b0c10; border: 1px solid #7c3aed; border-radius: 10px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
+        .tabs { display: flex; margin-bottom: 15px; background: #151821; border-radius: 6px; padding: 3px; }
+        .tab { flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 8px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .tab.active { background: #7c3aed; color: white; }
+        input { width: 100%; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 10px; border-radius: 6px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-size: 13px; }
+        .btn-main { width: 100%; background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+
+        /* MAIN APP INTERFACE */
+        #main-app { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+        .menu-bar { display: flex; background: #111218; border-bottom: 1px solid #27272a; padding: 8px 15px; gap: 10px; }
+        .menu-btn { background: #1f2231; border: none; color: #e1e1e6; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .menu-btn.active { background: #7c3aed; color: white; }
+
+        .view-section { flex: 1; display: none; flex-direction: column; padding: 10px; overflow-y: auto; }
+        .view-section.active { display: flex; }
+
+        /* CHAT STYLES */
         #chat-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; font-size: 12px; }
         .msg { padding: 10px; border-radius: 6px; line-height: 1.4; word-break: break-word; white-space: pre-line; }
         .msg.user { background: #7c3aed; color: white; align-self: flex-end; max-width: 85%; }
         .msg.ai { background: #151821; border-left: 3px solid #22c55e; align-self: flex-start; max-width: 95%; }
         .input-area { display: flex; gap: 6px; }
-        .input-area input { flex: 1; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 9px; border-radius: 6px; outline: none; font-family: monospace; }
-        .input-area button { background: #7c3aed; color: white; border: none; padding: 9px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: monospace; }
+        .input-area input { flex: 1; margin: 0; font-family: monospace; }
+        .input-area button { background: #7c3aed; color: white; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        /* PLANS STYLES */
+        .plan-card { background: #0b0c10; border: 1px solid #7c3aed; border-radius: 8px; padding: 15px; margin-bottom: 12px; text-align: center; }
+        .plan-card h3 { color: #a78bfa; margin-top: 0; }
+        .price { font-size: 18px; font-weight: bold; color: #22c55e; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🧠 IAHAKER [UNIVERSAL AI & PACKAGES CORE]</h1>
-        <span style="font-size: 11px; color: #22c55e;">● Base de Datos Total Activa</span>
-    </header>
 
-    <div class="chat-container">
-        <div id="chat-output">
-            <div class="msg ai">
-<strong>[IAHAKER CORE DATABASE INITIALIZED]:</strong>
-Sistemas de paquetes, librerías y terminal cargados al 100%. 
-Puedo proveerte comandos de instalación, paquetes de Node.js, Python, APT, scripts de Termux, librerías y bases de datos completas. 
-¿Qué paquete o estructura deseas desplegar hoy?
+    <!-- PANTALLA DE REGISTRO / LOGIN -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h2 style="color: #a78bfa; margin-top: 0; font-size: 16px;">IAHAKER.COM</h2>
+            <div class="tabs">
+                <button class="tab active" id="tabReg" onclick="setAuthMode('register')">Registrarse</button>
+                <button class="tab" id="tabLog" onclick="setAuthMode('login')">Iniciar Sesión</button>
+            </div>
+            <input type="text" id="authName" placeholder="Tu Nombre">
+            <input type="email" id="authEmail" placeholder="Correo electrónico">
+            <input type="password" id="authPass" placeholder="Contraseña">
+            <button class="btn-submit btn-main" id="authBtn" onclick="handleAuth()">Crear Cuenta</button>
+        </div>
+    </div>
+
+    <!-- APLICACIÓN PRINCIPAL (TRAS INICIAR SESIÓN) -->
+    <div id="main-app">
+        <header>
+            <h1>IAHAKER CLIENT PORTAL</h1>
+            <button onclick="logout()" style="background:#ef4444; border:none; color:white; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">Salir</button>
+        </header>
+
+        <!-- MENÚ DE NAVEGACIÓN -->
+        <div class="menu-bar">
+            <button class="menu-btn active" onclick="switchView('chat', this)">💬 AI & Paquetes</button>
+            <button class="menu-btn" onclick="switchView('plans', this)">💎 Comprar Planes</button>
+            <button class="menu-btn" onclick="switchView('profile', this)">👤 Mi Perfil</button>
+        </div>
+
+        <!-- VISTA 1: CHAT CON IA DE PAQUETES Y TERMINAL -->
+        <div id="view-chat" class="view-section active">
+            <div id="chat-output">
+                <div class="msg ai">
+<strong>[IAHAKER AI CORE]:</strong> 
+Asistente y base de datos universal activa. Pídeme paquetes de Python, Node.js, comandos de terminal Termux, librerías o scripts de despliegue.
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Ej: dame paquetes de python o comandos nmap..." onkeydown="handleEnter(event)">
+                <button onclick="sendMessage()">Enviar</button>
             </div>
         </div>
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="Ej: dame paquetes de python, comandos nmap, librerias node..." onkeydown="handleEnter(event)">
-            <button onclick="sendMessage()">Enviar</button>
+
+        <!-- VISTA 2: COMPRAR PLANES -->
+        <div id="view-plans" class="view-section">
+            <h2 style="color: #a78bfa; font-size: 15px; margin-top:0;">Planes de Suscripción</h2>
+            
+            <div class="plan-card">
+                <h3>Plan Hacker Pro</h3>
+                <div class="price">$9.99 / mes</div>
+                <p style="font-size: 12px; color: #a1a1aa;">Acceso completo a la base de datos de scripts avanzados, soporte prioritario y herramientas de red ilimitadas.</p>
+                <button class="btn-main" onclick="buyPlan('Hacker Pro')">Comprar Plan Pro</button>
+            </div>
+
+            <div class="plan-card">
+                <h3>Plan Enterprise / Root</h3>
+                <div class="price">$29.99 / mes</div>
+                <p style="font-size: 12px; color: #a1a1aa;">Acceso total a servidores privados, automatización CI/CD personalizada y asistencia IA ilimitada.</p>
+                <button class="btn-main" onclick="buyPlan('Enterprise')">Comprar Plan Enterprise</button>
+            </div>
+        </div>
+
+        <!-- VISTA 3: PERFIL DE USUARIO -->
+        <div id="view-profile" class="view-section">
+            <div class="plan-card" style="text-align: left;">
+                <h3 style="border-bottom: 1px solid #27272a; padding-bottom: 6px;">Datos de la Cuenta</h3>
+                <p><strong>Nombre:</strong> <span id="profileName">-</span></p>
+                <p><strong>Correo:</strong> <span id="profileEmail">-</span></p>
+                <p><strong>Plan Actual:</strong> <span id="profilePlan" style="color: #22c55e;">Gratuito / Estándar</span></p>
+            </div>
         </div>
     </div>
 
     <script>
+        let authMode = 'register';
+        let currentUser = null;
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('tabReg').classList.toggle('active', mode === 'register');
+            document.getElementById('tabLog').classList.toggle('active', mode === 'login');
+            document.getElementById('authName').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('authBtn').innerText = mode === 'register' ? 'Crear Cuenta' : 'Iniciar Sesión';
+        }
+
+        function handleAuth() {
+            const name = document.getElementById('authName').value.trim();
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPass').value.trim();
+
+            if(!email || !pass || (authMode === 'register' && !name)) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('iahaker_users')) || [];
+
+            if(authMode === 'register') {
+                if(users.some(u => u.email === email)) {
+                    alert("Este correo ya está registrado.");
+                    return;
+                }
+                const newUser = { name, email, pass, plan: 'Estándar' };
+                users.push(newUser);
+                localStorage.setItem('iahaker_users', JSON.stringify(users));
+                currentUser = newUser;
+                alert("¡Cuenta creada con éxito!");
+            } else {
+                const found = users.find(u => u.email === email && u.pass === pass);
+                if(!found && !(email === "yerandysff@gmail.com" && pass === "@Yerandys")) {
+                    alert("Correo o contraseña incorrectos.");
+                    return;
+                }
+                currentUser = found || { name: "Xirox", email, plan: "Admin" };
+            }
+
+            // Mostrar app principal
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            document.getElementById('profileName').innerText = currentUser.name;
+            document.getElementById('profileEmail').innerText = currentUser.email;
+            document.getElementById('profilePlan').innerText = currentUser.plan;
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+        }
+
+        function switchView(viewName, btn) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+            btn.classList.add('active');
+        }
+
         function sendMessage() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
@@ -49,57 +190,32 @@ Puedo proveerte comandos de instalación, paquetes de Node.js, Python, APT, scri
             input.value = '';
 
             setTimeout(() => {
-                let response = generateUniversalDatabaseResponse(text);
-                output.innerHTML += `<div class="msg ai"><strong>[IAHAKER DATABASE]:</strong>\n${response}</div>`;
+                let response = getUniversalPackages(text);
+                output.innerHTML += `<div class="msg ai"><strong>[IAHAKER CORE]:</strong>\n${response}</div>`;
                 output.scrollTop = output.scrollHeight;
-            }, 400);
+            }, 300);
         }
 
         function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
 
-        function generateUniversalDatabaseResponse(query) {
-            const q = query.toLowerCase();
-            
-            if(q.includes('python') || q.includes('pip') || q.includes('libreria')) {
-                return `📦 **Base de Paquetes Python & Librerías Esenciales:**\n` +
-                       `• **Instalación base:** pkg install python python-pip\n` +
-                       `• **Librerías de Red / Web:**\n` +
-                       `  - pip install requests beautifulsoup4 flask fastapi uvicorn\n` +
-                       `• **Librerías de Datos / IA:**\n` +
-                       `  - pip install numpy pandas scikit-learn torch\n` +
-                       `• **Seguridad / Ciberseguridad:**\n` +
-                       `  - pip install scapy pwntools paramiko impacket`;
-            } 
-            else if(q.includes('node') || q.includes('npm') || q.includes('javascript') || q.includes('js')) {
-                return `📦 **Base de Paquetes Node.js & Entorno JS:**\n` +
-                       `• **Instalación base:** pkg install nodejs\n` +
-                       `• **Frameworks y Servidores:**\n` +
-                       `  - npm install express cors dotenv nodemon\n` +
-                       `• **Herramientas CLI y Utilidades:**\n` +
-                       `  - npm install -g typescript ts-node pm2\n` +
-                       `• **Base de Datos / ORM:**\n` +
-                       `  - npm install mongoose pg sqlite3 prisma`;
-            } 
-            else if(q.includes('termux') || q.includes('pkg') || q.includes('apt') || q.includes('terminal')) {
-                return `⚙️ **Base de Comandos y Paquetes de Terminal (Termux / Linux):**\n` +
-                       `• **Actualización total:** pkg update && pkg upgrade -y\n` +
-                       `• **Herramientas de Red:** pkg install nmap curl wget netcat tcpdump git -y\n` +
-                       `• **Editores y Compiladores:** pkg install nano vim clang make cmake python golang rust -y\n` +
-                       `• **Almacenamiento:** termux-setup-storage (Para dar permisos de archivos)`;
-            } 
-            else if(q.includes('base de dato') || q.includes('sql') || q.includes('db')) {
-                return `🗄️ **Base de Datos & Motores de Almacenamiento:**\n` +
-                       `• **SQLite3 (Local liviano):** pkg install sqlite\n` +
-                       `• **PostgreSQL:** pkg install postgresql\n` +
-                       `• **MariaDB / MySQL:** pkg install mariadb\n` +
-                       `• **Estructura JSON Local:** Almacenamiento mediante JavaScript nativo con \`localStorage\` o archivos \`.json\` cifrados.`;
-            } 
-            else {
-                return `🔍 **Resultado de Búsqueda Global para:** "${query}"\n` +
-                       `• **Paquetes sugeridos:** Actualización de repositorios y dependencias.\n` +
-                       `• **Comando de despliegue rápido:**\n` +
-                       `  \`pkg update && pkg install git python nodejs curl -y\`\n` +
-                       `• **Estado del sistema:** Base de datos universal vinculada y lista para ejecutar cualquier script o librería que solicites. Especifique un lenguaje o herramienta particular si requiere código fuente completo.`;
+        function getUniversalPackages(q) {
+            q = q.toLowerCase();
+            if(q.includes('python')) {
+                return `📦 **Paquetes y Librerías Python:**\n- pip install requests flask fastapi numpy pandas torch scapy`;
+            } else if(q.includes('node') || q.includes('js')) {
+                return `📦 **Paquetes Node.js & NPM:**\n- npm install express cors nodemon mongoose prisma typescript`;
+            } else if(q.includes('termux') || q.includes('terminal')) {
+                return `⚙️ **Comandos Termux / APT:**\n- pkg update && pkg install nmap curl wget git python nodejs clang -y`;
+            } else {
+                return `🔍 **Base de datos universal:** Consulta procesada. Recomiendo actualizar repositorios con \`pkg update\` o solicitar librerías específicas de Python, Node o Termux.`;
+            }
+        }
+
+        function buyPlan(planName) {
+            alert(`¡Solicitud de compra del [${planName}] iniciada! Contacte al administrador Xirox para activar su licencia.`);
+            if(currentUser) {
+                currentUser.plan = planName;
+                document.getElementById('profilePlan').innerText = planName;
             }
         }
     </script>

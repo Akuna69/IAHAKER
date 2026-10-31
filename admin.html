@@ -2,57 +2,105 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER ADMIN - Direct Access</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IAHAKER ADMIN - Control Center</title>
     <style>
-        body { background-color: #030305; color: #ff3333; font-family: monospace; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-        header { border-bottom: 1px solid #ff3333; padding-bottom: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { color: #ff3333; font-size: 15px; margin: 0; text-shadow: 0 0 8px rgba(255, 51, 51, 0.6); }
-        .card { background: #07070b; border: 1px solid #ff3333; border-radius: 6px; padding: 15px; margin-bottom: 12px; box-shadow: inset 0 0 15px rgba(255, 51, 51, 0.1); }
-        .card h3 { color: #ff5555; margin-top: 0; border-bottom: 1px dashed #330000; padding-bottom: 6px; font-size: 13px; }
-        .user-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1a0000; font-size: 12px; color: #ccc; }
-        button { background: #7f0000; color: white; border: 1px solid #ff3333; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: monospace; }
+        * { box-sizing: border-box; }
+        body { background-color: #030305; color: #ff3333; font-family: monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { border-bottom: 1px solid #ff3333; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        h1 { color: #ff3333; font-size: 14px; margin: 0; text-shadow: 0 0 6px rgba(255, 51, 51, 0.6); }
+        .main-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
+        .card { background: #07070b; border: 1px solid #ff3333; border-radius: 6px; padding: 12px; box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.1); }
+        .card h3 { color: #ff5555; margin-top: 0; border-bottom: 1px dashed #330000; padding-bottom: 5px; font-size: 12px; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1a0000; font-size: 11px; color: #ccc; gap: 5px; }
+        .user-info { display: flex; flex-direction: column; overflow: hidden; }
+        .user-actions { display: flex; gap: 5px; flex-shrink: 0; }
+        button { background: #7f0000; color: white; border: 1px solid #ff3333; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: monospace; font-size: 11px; }
+        button.danger { background: #450a0a; border-color: #ef4444; color: #f87171; }
+        button:hover { opacity: 0.85; }
     </style>
 </head>
 <body>
     <header>
         <h1>🛡️ IAHAKER ADMIN ROOT</h1>
-        <span style="color: #00ff66; font-size: 11px;">● Acceso Libre Autorizado</span>
+        <span style="color: #00ff66; font-size: 10px;">● Ajustado OK</span>
     </header>
 
-    <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+    <div class="main-scroll">
         <div class="card">
             <h3>Estado del Sistema Root</h3>
-            <p><strong>Administrador:</strong> Xirox (yerandysff@gmail.com)</p>
-            <p><strong>Nivel de Seguridad:</strong> Acceso Total Ilimitado 24/7</p>
+            <p style="margin: 4px 0; font-size: 11px;"><strong>Administrador:</strong> Xirox (yerandysff@gmail.com)</p>
+            <p style="margin: 4px 0; font-size: 11px;"><strong>Nivel:</strong> Acceso Total / Control de Suscripciones</p>
         </div>
 
         <div class="card">
-            <h3>Control y Gestión de Usuarios</h3>
+            <h3>Control y Gestión de Usuarios & Suscripciones</h3>
             <div id="admin-user-list">
-                <div class="user-row"><span>Xirox (Cuba)</span> <span style="color: #ff3333;">[ADMIN ROOT]</span></div>
+                <!-- Se inyecta dinámicamente -->
             </div>
             <br>
-            <button onclick="addNewUser()">+ Registrar Nuevo Usuario</button>
+            <button onclick="addNewUser()" style="width: 100%;">+ Registrar Nuevo Usuario</button>
         </div>
     </div>
 
     <script>
-        let dbUsers = JSON.parse(localStorage.getItem('iahaker_users')) || [{ name: "Xirox", email: "yerandysff@gmail.com", plan: "admin" }];
+        // Obtener base de datos de usuarios unificada del almacenamiento local
+        let dbUsers = JSON.parse(localStorage.getItem('iahaker_users')) || [
+            { name: "Xirox", email: "yerandysff@gmail.com", plan: "Enterprise / Root" },
+            { name: "Yerandys", email: "yerandys001@gmail.com", plan: "Hacker Pro" }
+        ];
+
         function renderAdminUsers() {
             const container = document.getElementById('admin-user-list');
-            container.innerHTML = dbUsers.map(u => `<div class="user-row"><span>${u.name} (${u.email})</span> <span style="color: #ff3333;">[${u.plan.toUpperCase()}]</span></div>`).join('');
+            if (dbUsers.length === 0) {
+                container.innerHTML = '<div style="font-size: 11px; color: #777; text-align: center; padding: 10px;">No hay usuarios registrados.</div>';
+                return;
+            }
+
+            container.innerHTML = dbUsers.map((u, index) => `
+                <div class="user-row">
+                    <div class="user-info">
+                        <span style="color: #fff; font-weight: bold;">${u.name}</span>
+                        <span style="color: #888; font-size: 10px;">${u.email}</span>
+                        <span style="color: #22c55e; font-size: 10px; margin-top: 2px;">Plan: [${u.plan || 'Estándar'}]</span>
+                    </div>
+                    <div class="user-actions">
+                        <button onclick="changePlan(${index})">Plan</button>
+                        <button class="danger" onclick="deleteUser(${index})">Eliminar</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Sincronizar con localStorage
+            localStorage.setItem('iahaker_users', JSON.stringify(dbUsers));
         }
+
         function addNewUser() {
             let name = prompt("Nombre del usuario:");
             let email = prompt("Correo electrónico:");
             if(name && email) {
-                dbUsers.push({ name, email, plan: "cliente" });
-                localStorage.setItem('iahaker_users', JSON.stringify(dbUsers));
+                dbUsers.push({ name, email, plan: "Estándar" });
                 renderAdminUsers();
-                alert("Usuario añadido correctamente.");
+                alert("Usuario registrado con éxito.");
             }
         }
+
+        function deleteUser(index) {
+            if(confirm(`¿Estás seguro de eliminar al usuario ${dbUsers[index].name}?`)) {
+                dbUsers.splice(index, 1);
+                renderAdminUsers();
+            }
+        }
+
+        function changePlan(index) {
+            let newPlan = prompt("Asignar nuevo plan (Ej: Estándar, Hacker Pro, Enterprise):", dbUsers[index].plan);
+            if(newPlan) {
+                dbUsers[index].plan = newPlan;
+                renderAdminUsers();
+                alert("Suscripción actualizada correctamente.");
+            }
+        }
+
         renderAdminUsers();
     </script>
 </body>

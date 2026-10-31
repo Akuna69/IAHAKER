@@ -41,7 +41,7 @@ jobs:
           }
         }
         PKG
-        npm install
+        npm install --ignore-scripts
         npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
         npx cap add android
         cd android
@@ -121,7 +121,7 @@ jobs:
           }
         }
         PKG
-        npm install
+        npm install --ignore-scripts
         npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
         npx cap add android
         cd android

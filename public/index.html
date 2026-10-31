@@ -7,7 +7,12 @@
     <style>
         body { background-color: #0d0e15; color: #e1e1e6; font-family: monospace; margin: 0; display: flex; flex-direction: column; height: 100vh; }
         header { background: #161822; padding: 15px; text-align: center; border-bottom: 2px solid #7c3aed; font-weight: bold; color: #a78bfa; display: flex; justify-content: space-between; align-items: center; padding-left: 20px; padding-right: 20px;}
-        #main-container { display: flex; flex: 1; overflow: hidden; }
+        #auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13, 14, 21, 0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .auth-card { background: #161822; border: 1px solid #7c3aed; padding: 25px; border-radius: 10px; width: 320px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 0 20px rgba(124, 58, 237, 0.3); }
+        .auth-card h2 { color: #a78bfa; text-align: center; margin-top: 0; }
+        .auth-card input, .auth-card select { background: #09090b; border: 1px solid #3f3f46; color: #e1e1e6; padding: 10px; border-radius: 6px; outline: none; font-family: monospace; width: 100%; box-sizing: border-box; }
+        .auth-card button { background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        #main-container { display: flex; flex: 1; overflow: hidden; display: none; }
         #chat-section { flex: 2; display: flex; flex-direction: column; border-right: 1px solid #27272a; }
         #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         #pricing-section { flex: 1; padding: 20px; background: #12131c; overflow-y: auto; }
@@ -15,65 +20,135 @@
         .user { background: #7c3aed; color: white; align-self: flex-end; }
         .bot { background: #1f2231; color: #f4f4f5; align-self: flex-start; border: 1px solid #3f3f46; }
         .input-area { display: flex; padding: 10px; background: #161822; border-top: 1px solid #27272a; }
-        input { flex: 1; background: #09090b; border: 1px solid #3f3f46; color: #a78bfa; padding: 10px; border-radius: 6px; outline: none; font-family: monospace; }
-        button { background: #7c3aed; color: white; border: none; padding: 8px 15px; margin-top: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        .input-area input { flex: 1; background: #09090b; border: 1px solid #3f3f46; color: #a78bfa; padding: 10px; border-radius: 6px; outline: none; font-family: monospace; }
+        .input-area button { background: #7c3aed; color: white; border: none; padding: 8px 15px; margin-left: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: auto; }
         .card { background: #1a1b26; border: 1px solid #3f3f46; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
         .card h3 { color: #a78bfa; margin-top: 0; margin-bottom: 5px; }
         .price { color: #22c55e; font-weight: bold; }
     </style>
 </head>
 <body>
+
+    <div id="auth-modal">
+        <div class="auth-card">
+            <h2>IAHAKER.COM</h2>
+            <p style="font-size: 11px; text-align: center; color: #a1a1aa; margin-top:0;">Registro de Usuarios o Admin (Xirox)</p>
+            <input type="text" id="regUser" placeholder="Nombre de usuario (Ej: Xirox)">
+            <input type="email" id="regEmail" placeholder="Correo electrónico">
+            <input type="password" id="regPass" placeholder="Contraseña">
+            <select id="regCountry">
+                <option value="" disabled selected>Selecciona tu país</option>
+            </select>
+            <button onclick="registerUser()">Acceder al Sistema</button>
+        </div>
+    </div>
+
     <header>
-        <span>KALI >$ IAHAKER.COM</span>
+        <span id="headerTitle">KALI >$ IAHAKER.COM</span>
         <span id="userStatus" style="font-size: 12px; color: #22c55e;">Modo: Simple</span>
     </header>
     
     <div id="main-container">
         <div id="chat-section">
             <div id="chat-container">
-                <div class="message bot">¡Bienvenido a IAHAKER.COM! Estás en el Sistema Simple. Elige un modo avanzado en el panel derecho.</div>
+                <div class="message bot">¡Bienvenido a IAHAKER.COM! Sistema activo mundialmente.</div>
             </div>
             <div class="input-area">
                 <input type="text" id="userInput" placeholder="Escribe un comando..." autofocus>
-                <button style="width:auto; margin:0; margin-left:8px;" onclick="sendMessage()">Enviar</button>
+                <button onclick="sendMessage()">Enviar</button>
             </div>
         </div>
 
         <div id="pricing-section">
-            <div class="card">
+            <div class="card" id="simpleCard">
                 <h3>Sistema Simple</h3>
                 <p>• 15 mensajes de prueba</p>
                 <p class="price">Gratis (0 USDT)</p>
             </div>
 
-            <div class="card" style="border-color: #3b82f6;">
+            <div class="card" style="border-color: #3b82f6;" id="hackerCard">
                 <h3>Modo Hacker</h3>
-                <p>• Comandos avanzados de terminal</p>
+                <p>• Comandos avanzados</p>
                 <p>• 100 mensajes al mes</p>
                 <p class="price">5.00 USDT / mes</p>
-                <button style="background: #3b82f6;" onclick="requestPlan('hacker')">Adquirir Modo Hacker</button>
+                <button style="background: #3b82f6; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="requestPlan('hacker')">Adquirir Modo Hacker</button>
             </div>
 
-            <div class="card" style="border-color: #22c55e;">
+            <div class="card" style="border-color: #22c55e;" id="unlimitedCard">
                 <h3>Modo Sin Límites</h3>
                 <p>• Uso 100% ilimitado</p>
-                <p>• Prioridad máxima en procesamiento</p>
                 <p class="price">15.00 USDT / mes</p>
-                <button style="background: #22c55e;" onclick="requestPlan('unlimited')">Adquirir Sin Límites</button>
+                <button style="background: #22c55e; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="requestPlan('unlimited')">Adquirir Sin Límites</button>
             </div>
 
             <div id="paymentBox" class="card" style="display:none; border-color: #7c3aed; background: #161722;">
                 <h3 id="paymentTitle">Pago con USDT</h3>
                 <p id="walletInfo" style="word-break: break-all; font-size: 11px; background: #09090b; padding: 8px;"></p>
-                <input type="text" id="txHashInput" placeholder="Pega el Hash de la transacción" style="width:100%; margin-top:5px; box-sizing: border-box;">
-                <button style="background:#7c3aed;" onclick="verifyPayment()">Verificar y Activar</button>
+                <input type="text" id="txHashInput" placeholder="Pega el Hash de la transacción" style="width:100%; margin-top:5px; box-sizing: border-box; background:#09090b; border:1px solid #3f3f46; color:#e1e1e6; padding:8px; border-radius:6px;">
+                <button style="background:#7c3aed; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="verifyPayment()">Verificar y Activar</button>
             </div>
         </div>
     </div>
 
     <script>
-        const userId = 'user_' + Math.random().toString(36).substring(7);
+        let currentUserId = '';
         let activePlanKey = 'simple';
+
+        const countries = [
+            "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán", "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benin", "Bielorrusia", "Birmania / Myanmar", "Bolivia", "Bosnia-Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Ciudad del Vaticano", "Colombia", "Comoras", "Congo", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Etiopía", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea Ecuatorial", "Guinea-Bisáu", "Guyana", "Haití", "Honduras", "Hungría", "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia", "Jamaica", "Japón", "Jordania", "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait", "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo", "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique", "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda", "Omán", "Países Bajos", "Pakistán", "Palaos", "Palestina", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Checa", "República Centroafricana", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumanía", "Rusia", "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Suazilandia", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam", "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu", "Ucrania", "Uganda", "Uruguay", "Uzbekistán", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue"
+        ];
+
+        const selectCountry = document.getElementById('regCountry');
+        countries.forEach(c => {
+            let opt = document.createElement('option');
+            opt.value = c;
+            opt.innerHTML = c;
+            selectCountry.appendChild(opt);
+        });
+
+        async function registerUser() {
+            const user = document.getElementById('regUser').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const country = document.getElementById('regCountry').value;
+
+            if (!user || !email || !pass || !country) {
+                alert('Por favor, rellena todos los campos.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user, email, pass, country })
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    currentUserId = user;
+                    document.getElementById('auth-modal').style.display = 'none';
+                    document.getElementById('main-container').style.display = 'flex';
+
+                    if(data.isAdmin) {
+                        document.getElementById('userStatus').innerText = "🛡️ ROL: ADMINISTRADOR XIROX";
+                        document.getElementById('headerTitle').innerText = "🛡️ PANEL DE ATENCIÓN XIROX";
+                        document.getElementById('pricing-section').innerHTML = `
+                            <div class="card" style="border-color:#7c3aed;">
+                                <h3>Panel de Control Admin</h3>
+                                <p>• Estado: Conectado como <b>Xirox</b></p>
+                                <p>• Correo: yerandysff@gmail.com</p>
+                                <p class="price" style="color:#a78bfa;">Acceso Total Ilimitado</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    alert('Error en el registro.');
+                }
+            } catch(e) {
+                alert('Error de conexión con el servidor.');
+            }
+        }
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
@@ -89,7 +164,7 @@
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, message: text })
+                    body: JSON.stringify({ userId: currentUserId, message: text })
                 });
                 const data = await response.json();
                 chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
@@ -119,7 +194,7 @@
             const res = await fetch('/api/verify-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, planKey: activePlanKey, txHash })
+                body: JSON.stringify({ userId: currentUserId, planKey: activePlanKey, txHash })
             });
             const data = await res.json();
             if(data.success) {

@@ -28,12 +28,11 @@
     </style>
 </head>
 <body>
-
     <div id="auth-modal">
         <div class="auth-card">
             <h2>IAHAKER.COM</h2>
-            <p style="font-size: 11px; text-align: center; color: #a1a1aa; margin-top:0;">Registro de Usuarios o Admin (Xirox)</p>
-            <input type="text" id="regUser" placeholder="Nombre de usuario (Ej: Xirox)">
+            <p style="font-size: 11px; text-align: center; color: #a1a1aa; margin-top:0;">Registro Mundial o Admin (Xirox)</p>
+            <input type="text" id="regUser" placeholder="Nombre de usuario">
             <input type="email" id="regEmail" placeholder="Correo electrónico">
             <input type="password" id="regPass" placeholder="Contraseña">
             <select id="regCountry">
@@ -51,7 +50,7 @@
     <div id="main-container">
         <div id="chat-section">
             <div id="chat-container">
-                <div class="message bot">¡Bienvenido a IAHAKER.COM! Sistema activo mundialmente.</div>
+                <div class="message bot">¡Bienvenido a IAHAKER.COM! Sistema activo globalmente.</div>
             </div>
             <div class="input-area">
                 <input type="text" id="userInput" placeholder="Escribe un comando..." autofocus>
@@ -60,27 +59,23 @@
         </div>
 
         <div id="pricing-section">
-            <div class="card" id="simpleCard">
+            <div class="card">
                 <h3>Sistema Simple</h3>
                 <p>• 15 mensajes de prueba</p>
                 <p class="price">Gratis (0 USDT)</p>
             </div>
-
-            <div class="card" style="border-color: #3b82f6;" id="hackerCard">
+            <div class="card" style="border-color: #3b82f6;">
                 <h3>Modo Hacker</h3>
-                <p>• Comandos avanzados</p>
                 <p>• 100 mensajes al mes</p>
                 <p class="price">5.00 USDT / mes</p>
                 <button style="background: #3b82f6; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="requestPlan('hacker')">Adquirir Modo Hacker</button>
             </div>
-
-            <div class="card" style="border-color: #22c55e;" id="unlimitedCard">
+            <div class="card" style="border-color: #22c55e;">
                 <h3>Modo Sin Límites</h3>
                 <p>• Uso 100% ilimitado</p>
                 <p class="price">15.00 USDT / mes</p>
                 <button style="background: #22c55e; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="requestPlan('unlimited')">Adquirir Sin Límites</button>
             </div>
-
             <div id="paymentBox" class="card" style="display:none; border-color: #7c3aed; background: #161722;">
                 <h3 id="paymentTitle">Pago con USDT</h3>
                 <p id="walletInfo" style="word-break: break-all; font-size: 11px; background: #09090b; padding: 8px;"></p>
@@ -93,118 +88,62 @@
     <script>
         let currentUserId = '';
         let activePlanKey = 'simple';
-
-        const countries = [
-            "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán", "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benin", "Bielorrusia", "Birmania / Myanmar", "Bolivia", "Bosnia-Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután", "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Ciudad del Vaticano", "Colombia", "Comoras", "Congo", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Dominica", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Etiopía", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guinea", "Guinea Ecuatorial", "Guinea-Bisáu", "Guyana", "Haití", "Honduras", "Hungría", "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia", "Jamaica", "Japón", "Jordania", "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait", "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo", "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique", "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda", "Omán", "Países Bajos", "Pakistán", "Palaos", "Palestina", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Checa", "República Centroafricana", "República Democrática del Congo", "República Dominicana", "Ruanda", "Rumanía", "Rusia", "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Suazilandia", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam", "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu", "Ucrania", "Uganda", "Uruguay", "Uzbekistán", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue"
-        ];
-
-        const selectCountry = document.getElementById('regCountry');
-        countries.forEach(c => {
-            let opt = document.createElement('option');
-            opt.value = c;
-            opt.innerHTML = c;
-            selectCountry.appendChild(opt);
-        });
+        const countries = ["Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán", "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benin", "Bielorrusia", "Bolivia", "Bosnia-Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Congo", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Etiopía", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabón", "Gambia", "Georgia", "Ghana", "Grecia", "Guatemala", "Guinea", "Haití", "Honduras", "Hungría", "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Israel", "Italia", "Jamaica", "Japón", "Jordania", "Kazajistán", "Kenia", "Kuwait", "Laos", "Letonia", "Líbano", "Libia", "Lituania", "Luxemburgo", "Madagascar", "Malasia", "Malawi", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique", "Namibia", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda", "Omán", "Países Bajos", "Pakistán", "Palestina", "Panamá", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Checa", "República Dominicana", "Rumanía", "Rusia", "San Marino", "Senegal", "Serbia", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Suecia", "Suiza", "Surinam", "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Túnez", "Turquía", "Ucrania", "Uganda", "Uruguay", "Uzbekistán", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue"];
+        
+        const sel = document.getElementById('regCountry');
+        countries.forEach(c => { let o = document.createElement('option'); o.value = c; o.innerHTML = c; sel.appendChild(o); });
 
         async function registerUser() {
             const user = document.getElementById('regUser').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const pass = document.getElementById('regPass').value.trim();
             const country = document.getElementById('regCountry').value;
+            if(!user || !email || !pass || !country) return alert('Rellena todos los campos.');
 
-            if (!user || !email || !pass || !country) {
-                alert('Por favor, rellena todos los campos.');
-                return;
-            }
-
-            try {
-                const res = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user, email, pass, country })
-                });
-                const data = await res.json();
-
-                if(data.success) {
-                    currentUserId = user;
-                    document.getElementById('auth-modal').style.display = 'none';
-                    document.getElementById('main-container').style.display = 'flex';
-
-                    if(data.isAdmin) {
-                        document.getElementById('userStatus').innerText = "🛡️ ROL: ADMINISTRADOR XIROX";
-                        document.getElementById('headerTitle').innerText = "🛡️ PANEL DE ATENCIÓN XIROX";
-                        document.getElementById('pricing-section').innerHTML = `
-                            <div class="card" style="border-color:#7c3aed;">
-                                <h3>Panel de Control Admin</h3>
-                                <p>• Estado: Conectado como <b>Xirox</b></p>
-                                <p>• Correo: yerandysff@gmail.com</p>
-                                <p class="price" style="color:#a78bfa;">Acceso Total Ilimitado</p>
-                            </div>
-                        `;
-                    }
-                } else {
-                    alert('Error en el registro.');
+            const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({user, email, pass, country}) });
+            const data = await res.json();
+            if(data.success) {
+                currentUserId = user;
+                document.getElementById('auth-modal').style.display = 'none';
+                document.getElementById('main-container').style.display = 'flex';
+                if(data.isAdmin) {
+                    document.getElementById('userStatus').innerText = "🛡️ ADMIN XIROX";
+                    document.getElementById('headerTitle').innerText = "🛡️ PANEL XIROX";
+                    document.getElementById('pricing-section').innerHTML = '<div class="card" style="border-color:#7c3aed;"><h3>Panel Admin</h3><p>Conectado como <b>Xirox</b></p><p class="price">Acceso Ilimitado</p></div>';
                 }
-            } catch(e) {
-                alert('Error de conexión con el servidor.');
-            }
+            } else { alert('Error en registro'); }
         }
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
-            if (!text) return;
-
+            if(!text) return;
             const chat = document.getElementById('chat-container');
             chat.innerHTML += `<div class="message user">${text}</div>`;
             input.value = '';
             chat.scrollTop = chat.scrollHeight;
 
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: currentUserId, message: text })
-                });
-                const data = await response.json();
-                chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
-            } catch (err) {
-                chat.innerHTML += `<div class="message bot" style="color:#ef4444;">Error de conexión.</div>`;
-            }
+            const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({userId: currentUserId, message: text}) });
+            const data = await res.json();
+            chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
             chat.scrollTop = chat.scrollHeight;
         }
 
         async function requestPlan(planKey) {
             activePlanKey = planKey;
-            const res = await fetch('/api/subscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ planKey })
-            });
+            const res = await fetch('/api/subscribe', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({planKey}) });
             const data = await res.json();
             document.getElementById('paymentBox').style.display = 'block';
             document.getElementById('paymentTitle').innerText = `Pagar ${data.planName} (${data.amount} USDT)`;
-            document.getElementById('walletInfo').innerHTML = `Envía <b>${data.amount} USDT</b> a la wallet BEP20:<br><b>${data.wallet}</b>`;
+            document.getElementById('walletInfo').innerHTML = `Envía <b>${data.amount} USDT</b> (BEP20):<br><b>${data.wallet}</b>`;
         }
 
         async function verifyPayment() {
             const txHash = document.getElementById('txHashInput').value.trim();
-            if(!txHash) return alert('Introduce el Hash de la transacción.');
-
-            const res = await fetch('/api/verify-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUserId, planKey: activePlanKey, txHash })
-            });
+            if(!txHash) return alert('Introduce el Hash.');
+            const res = await fetch('/api/verify-payment', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({userId: currentUserId, planKey: activePlanKey, txHash}) });
             const data = await res.json();
-            if(data.success) {
-                document.getElementById('userStatus').innerText = `Modo: ${activePlanKey.toUpperCase()} 🚀`;
-                document.getElementById('userStatus').style.color = "#22c55e";
-                alert(data.message);
-                document.getElementById('paymentBox').style.display = 'none';
-            } else {
-                alert('Verificación fallida.');
-            }
+            if(data.success) { alert(data.message); document.getElementById('paymentBox').style.display = 'none'; } else { alert('Falló'); }
         }
     </script>
 </body>

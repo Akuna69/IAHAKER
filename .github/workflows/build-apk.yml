@@ -12,10 +12,10 @@ jobs:
     - name: Clonar Repositorio
       uses: actions/checkout@v4
 
-    - name: Configurar Node.js
+    - name: Configurar Node.js (Versión 22)
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: '22'
 
     - name: Configurar Java (JDK 17)
       uses: actions/setup-java@v4
@@ -30,7 +30,7 @@ jobs:
         cp index.html ia-project/public/index.html
         cd ia-project
         npm init -y
-        npm install --save-exact @capacitor/cli@latest @capacitor/core@latest @capacitor/android@latest
+        npm install @capacitor/cli @capacitor/core @capacitor/android
         npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
         npx cap add android
         cd android
@@ -99,7 +99,7 @@ jobs:
         TERMHTML
         cd term-project
         npm init -y
-        npm install --save-exact @capacitor/cli@latest @capacitor/core@latest @capacitor/android@latest
+        npm install @capacitor/cli @capacitor/core @capacitor/android
         npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
         npx cap add android
         cd android

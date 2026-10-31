@@ -1,7 +1,11 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
+
+// Servir la carpeta public
+app.use(express.static(path.join(__dirname, '../public')));
 
 const usersMemory = {};
 
@@ -18,6 +22,7 @@ const ADMIN_CREDENTIALS = {
     pass: "@Yerandys"
 };
 
+// Rutas API
 app.post('/api/register', (req, res) => {
     const { user, email, pass, country } = req.body;
 
@@ -80,6 +85,11 @@ app.post('/api/verify-payment', (req, res) => {
         return res.json({ success: true, message: `¡${plans[planKey].name} activado!` });
     }
     res.status(400).json({ success: false, message: 'No válido.' });
+});
+
+// Ruta raíz que sirve el index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 module.exports = app;

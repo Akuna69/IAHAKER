@@ -29,7 +29,17 @@ jobs:
         mkdir -p ia-project/public
         cp index.html ia-project/public/index.html
         cd ia-project
-        echo '{"name":"ia-project","private":true}' > package.json
+        cat << 'PKG' > package.json
+        {
+          "name": "ia-project",
+          "private": true,
+          "dependencies": {
+            "@capacitor/core": "^7.0.0",
+            "@capacitor/android": "^7.0.0"
+          }
+        }
+        PKG
+        npm install --save-exact
         npx --yes @capacitor/cli@latest init IAHAKER.AI com.iahaker.ai --web-dir public
         npx --yes @capacitor/cli@latest add android
         cd android
@@ -97,7 +107,17 @@ jobs:
         </html>
         TERMHTML
         cd term-project
-        echo '{"name":"term-project","private":true}' > package.json
+        cat << 'PKG' > package.json
+        {
+          "name": "term-project",
+          "private": true,
+          "dependencies": {
+            "@capacitor/core": "^7.0.0",
+            "@capacitor/android": "^7.0.0"
+          }
+        }
+        PKG
+        npm install --save-exact
         npx --yes @capacitor/cli@latest init IAHAKER.Terminal com.iahaker.terminal --web-dir public
         npx --yes @capacitor/cli@latest add android
         cd android

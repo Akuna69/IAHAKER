@@ -3,77 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER ADMIN - SYSTEM CRITICAL</title>
+    <title>IAHAKER.COM - Admin Portal</title>
     <style>
-        body { background-color: #030305; color: #ff3333; font-family: monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; overflow: hidden; }
-        header { border-bottom: 1px solid #ff3333; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-        h1 { color: #ff3333; font-size: 13px; margin: 0; text-shadow: 0 0 8px rgba(255, 51, 51, 0.6); }
-        .container { flex: 1; display: flex; flex-direction: column; gap: 10px; justify-content: center; max-width: 400px; margin: auto; width: 100%; }
-        .card { background: #07070b; border: 1px solid #ff3333; border-radius: 4px; padding: 15px; box-shadow: inset 0 0 15px rgba(255, 51, 51, 0.15); position: relative; }
-        .card::before { content: "SYSTEM FAILURE - CODE: 0x00000404"; display: block; font-size: 9px; color: #777; margin-bottom: 8px; border-bottom: 1px dashed #333; padding-bottom: 4px; }
-        .card h3 { color: #ff5555; margin-top: 0; text-align: center; font-size: 13px; letter-spacing: 1px; }
-        input { width: 100%; background: #000; border: 1px solid #ff3333; color: #fff; padding: 8px; border-radius: 4px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-family: monospace; font-size: 12px; }
-        button { width: 100%; background: #7f0000; color: white; border: 1px solid #ff3333; padding: 9px; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: monospace; text-shadow: 0 0 5px #000; }
-        button:hover { background: #b30000; }
-        .admin-panel { display: none; }
-        .user-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #1a0000; font-size: 11px; color: #ccc; }
-        .warning-text { font-size: 10px; color: #888; text-align: center; margin-top: 5px; }
+        body { background-color: #050508; color: #e1e1e6; font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; box-sizing: border-box; }
+        .auth-card { background: #0b0c10; border: 1px solid #7c3aed; border-radius: 12px; padding: 25px; width: 320px; box-shadow: 0 0 20px rgba(124, 58, 237, 0.2); text-align: center; }
+        h2 { color: #a78bfa; margin-top: 0; margin-bottom: 20px; font-size: 18px; letter-spacing: 1px; }
+        .tabs { display: flex; margin-bottom: 20px; background: #151821; border-radius: 6px; padding: 3px; }
+        .tab { flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 8px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .tab.active { background: #7c3aed; color: white; }
+        input { width: 100%; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 10px; border-radius: 6px; margin-bottom: 12px; box-sizing: border-box; outline: none; font-size: 13px; }
+        .btn-submit { width: 100%; background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; margin-top: 5px; }
+        .admin-dashboard { display: none; text-align: left; width: 100%; max-width: 400px; background: #0b0c10; border: 1px solid #7c3aed; border-radius: 12px; padding: 20px; }
+        .user-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1f2231; font-size: 12px; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>⚠️ ACCESS DENIED // 404</h1>
-        <span id="status-badge" style="color: #ff3333; font-size: 10px;">● ROOT LOCKED</span>
-    </header>
 
-    <!-- PANTALLA DE ACCESO RESTRINGIDO -->
-    <div id="login-screen" class="container">
-        <div class="card">
-            <h3>REALITY NOT FOUND</h3>
-            <p class="warning-text">PLEASE REBOOT EXISTENCE. ENTER CREDENTIALS:</p>
-            <br>
-            <input type="text" id="adminUser" placeholder="USER: Xirox" autocomplete="off">
-            <input type="password" id="adminPass" placeholder="PASSWORD: @Yerandys" autocomplete="off">
-            <button onclick="verifyAdmin()">BYPASS SECURITY</button>
+    <!-- TARJETA DE LOGIN IGUAL A LA WEB -->
+    <div id="authCard" class="auth-card">
+        <h2>IAHAKER.COM</h2>
+        <div class="tabs">
+            <button class="tab" onclick="switchTab('register')">Registrarse</button>
+            <button class="tab active" onclick="switchTab('login')">Iniciar Sesión</button>
         </div>
+        <input type="email" id="emailInput" placeholder="yerandysff@gmail.com" value="yerandysff@gmail.com">
+        <input type="password" id="passInput" placeholder="Contraseña" value="@Yerandys">
+        <button class="btn-submit" onclick="handleLogin()">Entrar al Sistema</button>
     </div>
 
-    <!-- PANEL DE ADMINISTRACIÓN ROOT -->
-    <div id="admin-panel" class="container admin-panel" style="max-width: 100%; justify-content: flex-start;">
-        <div class="card" style="max-width: 450px; margin: auto; width: 100%;">
-            <h3>CORE SYSTEM GRANTED</h3>
-            <p style="font-size: 12px; color: #00ff66;"><strong>Status:</strong> Root Access Active (Xirox)</p>
-            <div id="user-list">
-                <div class="user-row"><span>Xirox (Cuba)</span> <span style="color: #ff3333;">[ADMIN ROOT]</span></div>
+    <!-- PANEL DE ADMINISTRACIÓN -->
+    <div id="adminDashboard" class="admin-dashboard">
+        <h2 style="border-bottom: 1px solid #7c3aed; padding-bottom: 8px;">Panel Admin Xirox</h2>
+        <p><strong>Estado:</strong> Acceso Ilimitado 24/7</p>
+        <p><strong>Correo Root:</strong> yerandysff@gmail.com</p>
+        <div style="margin: 15px 0;">
+            <strong>Usuarios Registrados:</strong>
+            <div id="userList" style="margin-top: 8px;">
+                <div class="user-row"><span>Xirox (Cuba)</span> <span style="color: #a78bfa;">[ADMIN]</span></div>
             </div>
-            <br>
-            <button onclick="lockPanel()" style="background: #330000; border-color: #660000; color: #ff6666;">LOCK SYSTEM</button>
         </div>
+        <button class="btn-submit" onclick="logout()" style="background: #ef4444; margin-top: 10px;">Cerrar Sesión</button>
     </div>
 
     <script>
-        function verifyAdmin() {
-            const u = document.getElementById('adminUser').value.trim().toLowerCase();
-            const p = document.getElementById('adminPass').value.trim();
-
-            // Credenciales oficiales actualizadas
-            if(u === "xirox" && p === "@Yerandys") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'flex';
-                document.getElementById('status-badge').style.color = '#00ff66';
-                document.getElementById('status-badge').innerText = '● ROOT ACTIVE';
-                document.getElementById('adminUser').value = '';
-                document.getElementById('adminPass').value = '';
-            } else {
-                alert("ACCESS DENIED. INVALID CREDENTIALS.");
+        function switchTab(tab) {
+            if(tab === 'register') {
+                alert("Modo Registro restringido en la app de administración.");
             }
         }
 
-        function lockPanel() {
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('status-badge').style.color = '#ff3333';
-            document.getElementById('status-badge').innerText = '● ROOT LOCKED';
+        function handleLogin() {
+            const email = document.getElementById('emailInput').value.trim();
+            const pass = document.getElementById('passInput').value.trim();
+
+            // Validación directa con tus credenciales exactas
+            if(email === "yerandysff@gmail.com" && pass === "@Yerandys") {
+                document.getElementById('authCard').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+            } else {
+                alert("Credenciales inválidas. Acceso denegado.");
+            }
+        }
+
+        function logout() {
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('authCard').style.display = 'block';
+            document.getElementById('passInput').value = '';
         }
     </script>
 </body>

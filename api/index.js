@@ -18,7 +18,6 @@ const ADMIN_CREDENTIALS = {
     pass: "@Yerandys"
 };
 
-// API: Registro
 app.post('/api/register', (req, res) => {
     const { user, email, pass, country } = req.body;
 
@@ -35,7 +34,6 @@ app.post('/api/register', (req, res) => {
     res.json({ success: true, isAdmin: false, message: 'Registro exitoso.' });
 });
 
-// API: Chat
 app.post('/api/chat', (req, res) => {
     const { userId, message } = req.body;
     let user = usersMemory[userId] || { plan: 'simple', messagesCount: 0 };
@@ -58,7 +56,6 @@ app.post('/api/chat', (req, res) => {
     res.json({ reply: `${responsePrefix} > Procesado: "${message}"` });
 });
 
-// API: Suscripción
 app.post('/api/subscribe', (req, res) => {
     const { planKey } = req.body;
     const selectedPlan = plans[planKey];
@@ -73,7 +70,6 @@ app.post('/api/subscribe', (req, res) => {
     });
 });
 
-// API: Verificación de pago
 app.post('/api/verify-payment', (req, res) => {
     const { userId, planKey, txHash } = req.body;
     if (plans[planKey] && txHash) {
@@ -86,7 +82,6 @@ app.post('/api/verify-payment', (req, res) => {
     res.status(400).json({ success: false, message: 'No válido.' });
 });
 
-// Interfaz Web Completa (IAHAKER.COM) servida directamente
 app.get('*', (req, res) => {
     res.send(`<!DOCTYPE html>
 <html lang="es">
@@ -240,4 +235,5 @@ app.get('*', (req, res) => {
 </html>`);
 });
 
+// EXPORTACIÓN OBLIGATORIA PARA VERCEL
 module.exports = app;

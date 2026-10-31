@@ -26,12 +26,22 @@ jobs:
     # --- 1. CONSTRUIR APK DE LA IA ---
     - name: Construir Proyecto IA
       run: |
-        npm config set audit false
         mkdir -p ia-project/public
         cp index.html ia-project/public/index.html
         cd ia-project
-        npm init -y
-        npm install @capacitor/cli @capacitor/core @capacitor/android
+        cat << 'PKG' > package.json
+        {
+          "name": "ia-project",
+          "version": "1.0.0",
+          "private": true,
+          "dependencies": {
+            "@capacitor/android": "^7.0.0",
+            "@capacitor/core": "^7.0.0",
+            "@capacitor/cli": "^7.0.0"
+          }
+        }
+        PKG
+        npm install
         npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
         npx cap add android
         cd android
@@ -41,7 +51,6 @@ jobs:
     # --- 2. CONSTRUIR APK DE LA TERMINAL ---
     - name: Construir Proyecto Terminal
       run: |
-        npm config set audit false
         mkdir -p term-project/public
         cat << 'TERMHTML' > term-project/public/index.html
         <!DOCTYPE html>
@@ -100,8 +109,19 @@ jobs:
         </html>
         TERMHTML
         cd term-project
-        npm init -y
-        npm install @capacitor/cli @capacitor/core @capacitor/android
+        cat << 'PKG' > package.json
+        {
+          "name": "term-project",
+          "version": "1.0.0",
+          "private": true,
+          "dependencies": {
+            "@capacitor/android": "^7.0.0",
+            "@capacitor/core": "^7.0.0",
+            "@capacitor/cli": "^7.0.0"
+          }
+        }
+        PKG
+        npm install
         npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
         npx cap add android
         cd android

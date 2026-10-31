@@ -1,4 +1,4 @@
-name: Compilar APKs de IAHAKER
+name: Compilar Dos APKs de IAHAKER
 
 on:
   push:
@@ -23,20 +23,94 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Instalar Dependencias y Capacitor
+    # --- 1. CONSTRUIR APK DE LA IA ---
+    - name: Construir Proyecto IA
       run: |
-        npm install
+        mkdir -p ia-project/public
+        cp index.html ia-project/public/index.html
+        cd ia-project
+        npm init -y
+        npm install @capacitor/cli @capacitor/core @capacitor/android
         npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
         npx cap add android
-
-    - name: Compilar APK de Android
-      run: |
         cd android
         chmod +x gradlew
         ./gradlew assembleDebug
 
-    - name: Subir APK Generado
+    # --- 2. CONSTRUIR APK DE LA TERMINAL ---
+    - name: Construir Proyecto Terminal
+      run: |
+        mkdir -p term-project/public
+        # Crear vista dedicada solo para la terminal y panel admin
+        cat << 'TERMHTML' > term-project/public/index.html
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>IAHAKER Terminal</title>
+            <style>
+                body { background-color: #050508; color: #22c55e; font-family: monospace; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+                h2 { color: #a78bfa; margin-top: 0; text-align: center; border-bottom: 1px solid #7c3aed; padding-bottom: 8px; }
+                #kali-terminal { background: #000000; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; flex: 1; box-shadow: inset 0 0 15px rgba(124, 58, 237, 0.3); }
+                #kali-output { flex: 1; overflow-y: auto; font-size: 12px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; word-break: break-all; }
+                .kali-prompt-line { display: flex; align-items: center; gap: 6px; border-top: 1px solid #1f2231; padding-top: 8px; }
+                .kali-prompt-line span { color: #a78bfa; font-weight: bold; font-size: 12px; }
+                .kali-prompt-line input { background: transparent; border: none; color: #e1e1e6; font-family: monospace; outline: none; flex: 1; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <h2>🛡️ KALI LINUX TERMINAL - XIROX</h2>
+            <div id="kali-terminal">
+                <div id="kali-output">
+                    <div>Kali GNU/Linux Rolling [Version 2026.1]</div>
+                    <div>Root Access Granted. Type 'help' for commands.</div>
+                </div>
+                <div class="kali-prompt-line">
+                    <span>Yerandys@kali-iahaker:~#</span>
+                    <input type="text" id="kaliInput" autofocus onkeydown="handleKaliCommand(event)">
+                </div>
+            </div>
+            <script>
+                let registeredUsers = JSON.parse(localStorage.getItem('iahaker_users')) || [{ name: "Xirox", email: "yerandysff@gmail.com", country: "Cuba", plan: "admin" }];
+                function handleKaliCommand(e) {
+                    if(e.key === 'Enter') {
+                        const input = document.getElementById('kaliInput');
+                        const cmd = input.value.trim();
+                        const output = document.getElementById('kali-output');
+                        output.innerHTML += `<div>Yerandys@kali-iahaker:~# ${cmd}</div>`;
+                        input.value = '';
+                        let resp = "";
+                        const c = cmd.toLowerCase();
+                        if(c === 'help') resp = "Comandos: nmap, whoami, uname -a, users, clear";
+                        else if(c === 'whoami') resp = "Yerandys (Xirox - Administrador Principal)";
+                        else if(c === 'users') resp = registeredUsers.map(u => `- ${u.name} (${u.email}) [Plan: ${u.plan.toUpperCase()}]`).join('\\n');
+                        else if(c.startsWith('nmap')) resp = "Target up. Port 80/443 OPEN (IAHAKER.COM)";
+                        else if(c === 'uname -a') resp = "Linux kali-iahaker 6.12.0-kali-amd64";
+                        else if(c === 'clear') { output.innerHTML = ''; return; }
+                        else if(c === '') resp = "";
+                        else resp = `bash: ${cmd}: command not found.`;
+                        if(resp) output.innerHTML += `<div style="color: #a78bfa; white-space: pre-line;">${resp}</div>`;
+                        output.scrollTop = output.scrollHeight;
+                    }
+                }
+            </script>
+        </body>
+        </html>
+        TERMHTML
+        cd term-project
+        npm init -y
+        npm install @capacitor/cli @capacitor/core @capacitor/android
+        npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
+        npx cap add android
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Subir APKs Generados
       uses: actions/upload-artifact@v4
       with:
-        name: IAHAKER-App-Debug
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+        name: IAHAKER-APKs-Completos
+        path: |
+          ia-project/android/app/build/outputs/apk/debug/app-debug.apk
+          term-project/android/app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,59 @@
+import os
+
+# Contenido definitivo con los botones sociales limpios
+new_index_content = """<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAHAKER.COM - Acceso Social</title>
+    <style>
+        body { background-color: #030305; color: #e1e1e6; font-family: monospace; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 30px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
+        h2 { color: #a78bfa; margin-bottom: 5px; font-size: 20px; }
+        p { color: #888; font-size: 12px; margin-bottom: 25px; }
+        .btn-social { width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 13px; text-decoration: none; }
+        .btn-google { background: #ffffff; color: #000; }
+        .btn-telegram { background: #229ed9; color: #fff; }
+        .btn-facebook { background: #1877f2; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card" id="auth-box">
+        <h2>IAHAKER.COM</h2>
+        <p>Inicia sesión o regístrate</p>
+
+        <button onclick="socialLogin('Google')" class="btn-social btn-google">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Continuar con Google
+        </button>
+
+        <button onclick="socialLogin('Telegram')" class="btn-social btn-telegram">
+            <img src="https://www.svgrepo.com/show/475700/telegram.svg" width="18" height="18"> Continuar con Telegram
+        </button>
+
+        <button onclick="socialLogin('Facebook')" class="btn-social btn-facebook">
+            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" height="18"> Continuar con Facebook
+        </button>
+    </div>
+
+    <script>
+        function socialLogin(provider) {
+            alert("Autenticación con " + provider + " exitosa.");
+            localStorage.setItem("iahaker_auth", "true");
+            document.getElementById("auth-box").innerHTML = "<h2 style='color: #22c55e;'>¡Bienvenido al sistema!</h2><p style='color: #aaa;'>Conectado mediante " + provider + "</p>";
+        }
+    </script>
+</body>
+</html>
+"""
+
+# Sobrescribimos index.html y también user.html para que ambos tengan lo mismo y no haya confusiones
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(new_index_content)
+
+if os.path.exists("user.html"):
+    with open("user.html", "w", encoding="utf-8") as f:
+        f.write(new_index_content)
+
+print("¡Archivos index.html y user.html sincronizados con éxito!")

@@ -26,11 +26,12 @@ jobs:
     # --- 1. CONSTRUIR APK DE LA IA ---
     - name: Construir Proyecto IA
       run: |
+        npm config set audit false
         mkdir -p ia-project/public
         cp index.html ia-project/public/index.html
         cd ia-project
         npm init -y
-        npm install --no-audit --save @capacitor/cli @capacitor/core @capacitor/android
+        npm install @capacitor/cli @capacitor/core @capacitor/android
         npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
         npx cap add android
         cd android
@@ -40,6 +41,7 @@ jobs:
     # --- 2. CONSTRUIR APK DE LA TERMINAL ---
     - name: Construir Proyecto Terminal
       run: |
+        npm config set audit false
         mkdir -p term-project/public
         cat << 'TERMHTML' > term-project/public/index.html
         <!DOCTYPE html>
@@ -99,7 +101,7 @@ jobs:
         TERMHTML
         cd term-project
         npm init -y
-        npm install --no-audit --save @capacitor/cli @capacitor/core @capacitor/android
+        npm install @capacitor/cli @capacitor/core @capacitor/android
         npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
         npx cap add android
         cd android

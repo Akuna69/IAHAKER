@@ -12,23 +12,29 @@
         .auth-card h2 { color: #a78bfa; text-align: center; margin-top: 0; margin-bottom: 5px; }
         .auth-card input, .auth-card select { background: #09090b; border: 1px solid #3f3f46; color: #e1e1e6; padding: 10px; border-radius: 6px; outline: none; font-family: monospace; width: 100%; box-sizing: border-box; }
         .btn-main { background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-family: monospace; }
-        .btn-switch { background: transparent; color: #a78bfa; border: 1px solid #7c3aed; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-family: monospace; font-size: 11px; }
         .tab-buttons { display: flex; gap: 8px; margin-bottom: 10px; }
         .tab-btn { flex: 1; padding: 8px; background: #09090b; border: 1px solid #3f3f46; color: #a1a1aa; border-radius: 6px; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 12px; }
         .tab-btn.active { background: #7c3aed; color: white; border-color: #7c3aed; }
         #main-container { display: flex; flex: 1; overflow: hidden; display: none; }
         #chat-section { flex: 2; display: flex; flex-direction: column; border-right: 1px solid #27272a; }
         #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        #pricing-section { flex: 1; padding: 20px; background: #12131c; overflow-y: auto; }
+        #pricing-section { flex: 1; padding: 20px; background: #12131c; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .message { padding: 10px 15px; border-radius: 8px; max-width: 85%; line-height: 1.4; word-break: break-word; }
         .user { background: #7c3aed; color: white; align-self: flex-end; }
         .bot { background: #1f2231; color: #f4f4f5; align-self: flex-start; border: 1px solid #3f3f46; }
         .input-area { display: flex; padding: 10px; background: #161822; border-top: 1px solid #27272a; }
         .input-area input { flex: 1; background: #09090b; border: 1px solid #3f3f46; color: #a78bfa; padding: 10px; border-radius: 6px; outline: none; font-family: monospace; }
         .input-area button { background: #7c3aed; color: white; border: none; padding: 8px 15px; margin-left: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: auto; }
-        .card { background: #1a1b26; border: 1px solid #3f3f46; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
+        .card { background: #1a1b26; border: 1px solid #3f3f46; padding: 12px; border-radius: 8px; }
         .card h3 { color: #a78bfa; margin-top: 0; margin-bottom: 5px; }
         .price { color: #22c55e; font-weight: bold; }
+        
+        /* Terminal de Kali Linux */
+        #kali-terminal { background: #050508; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 260px; box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.2); }
+        #kali-output { flex: 1; overflow-y: auto; font-size: 11px; color: #22c55e; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; word-break: break-all; }
+        .kali-prompt-line { display: flex; align-items: center; gap: 6px; border-top: 1px solid #1f2231; padding-top: 6px; }
+        .kali-prompt-line span { color: #ef4444; font-weight: bold; font-size: 11px; }
+        .kali-prompt-line input { background: transparent; border: none; color: #e1e1e6; font-family: monospace; outline: none; flex: 1; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -40,7 +46,6 @@
                 <button id="btnTabLog" class="tab-btn" onclick="switchMode('login')">Iniciar Sesión</button>
             </div>
 
-            <!-- Opción 1: Registro -->
             <div id="formRegister" style="display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="regUser" placeholder="Nombre de usuario">
                 <input type="email" id="regEmail" placeholder="Correo electrónico">
@@ -51,7 +56,6 @@
                 <button class="btn-main" onclick="handleRegister()">Crear Cuenta</button>
             </div>
 
-            <!-- Opción 2: Iniciar Sesión (Correo y Contraseña) -->
             <div id="formLogin" style="display: none; flex-direction: column; gap: 10px;">
                 <input type="email" id="logEmail" placeholder="Correo electrónico" value="yerandysff@gmail.com">
                 <input type="password" id="logPass" placeholder="Contraseña" value="@Yerandys">
@@ -82,24 +86,9 @@
                 <p>• 15 mensajes de prueba</p>
                 <p class="price">Gratis (0 USDT)</p>
             </div>
-            <div class="card" style="border-color: #3b82f6;">
-                <h3>Modo Hacker</h3>
-                <p>• 100 mensajes al mes</p>
-                <p class="price">5.00 USDT / mes</p>
-                <button style="background: #3b82f6; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="requestPlan('hacker')">Adquirir Modo Hacker</button>
-            </div>
-            <div class="card" style="border-color: #22c55e;">
-                <h3>Modo Sin Límites</h3>
-                <p>• Uso 100% ilimitado</p>
-                <p class="price">15.00 USDT / mes</p>
-                <button style="background: #22c55e; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="requestPlan('unlimited')">Adquirir Sin Límites</button>
-            </div>
-            <div id="paymentBox" class="card" style="display:none; border-color: #7c3aed; background: #161722;">
-                <h3 id="paymentTitle">Pago con USDT</h3>
-                <p id="walletInfo" style="word-break: break-all; font-size: 11px; background: #09090b; padding: 8px;"></p>
-                <input type="text" id="txHashInput" placeholder="Pega el Hash de la transacción" style="width:100%; margin-top:5px; box-sizing: border-box; background:#09090b; border:1px solid #3f3f46; color:#e1e1e6; padding:8px; border-radius:6px;">
-                <button style="background:#7c3aed; width:100%; border:none; padding:8px; border-radius:6px; color:white; font-weight:bold; cursor:pointer; margin-top:8px;" onclick="verifyPayment()">Verificar y Activar</button>
-            </div>
+
+            <!-- Panel Admin con Terminal de Kali Linux -->
+            <div id="adminPanelContainer" style="display: none;"></div>
         </div>
     </div>
 
@@ -132,8 +121,7 @@
             const pass = document.getElementById('regPass').value.trim();
             const country = document.getElementById('regCountry').value;
             
-            if(!user || !email || !pass || !country) return alert('Rellena todos los campos de registro.');
-
+            if(!user || !email || !pass || !country) return alert('Rellena todos los campos.');
             currentUser.name = user;
             if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
                 setAdminMode();
@@ -147,8 +135,7 @@
         function handleLogin() {
             const email = document.getElementById('logEmail').value.trim();
             const pass = document.getElementById('logPass').value.trim();
-
-            if(!email || !pass) return alert('Introduce tu correo y contraseña.');
+            if(!email || !pass) return alert('Introduce correo y contraseña.');
 
             if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
                 currentUser.name = "Xirox";
@@ -166,8 +153,63 @@
             currentUser.plan = 'admin';
             document.getElementById('userStatus').innerText = "🛡️ ADMIN XIROX";
             document.getElementById('headerTitle').innerText = "🛡️ PANEL XIROX";
-            document.getElementById('pricing-section').innerHTML = '<div class="card" style="border-color:#7c3aed;"><h3>Panel Admin</h3><p>Conectado como <b>Xirox</b></p><p class="price">Acceso Ilimitado 24/7</p></div>';
+            
+            // Inyectar tarjeta de Admin con Terminal Kali Linux
+            document.getElementById('adminPanelContainer').innerHTML = `
+                <div class="card" style="border-color:#7c3aed;">
+                    <h3>🛡️ Terminal Kali Linux (Xirox)</h3>
+                    <div id="kali-terminal">
+                        <div id="kali-output">
+                            <div>Kali GNU/Linux Rolling [Version 2026.1]</div>
+                            <div>Root Access Granted. Type 'help' for commands.</div>
+                        </div>
+                        <div class="kali-prompt-line">
+                            <span>root@kali-iahaker:~#</span>
+                            <input type="text" id="kaliInput" autofocus onkeydown="handleKaliCommand(event)">
+                        </div>
+                    </div>
+                </div>
+            `;
             openAppSession();
+        }
+
+        function handleKaliCommand(e) {
+            if(e.key === 'Enter') {
+                const input = document.getElementById('kaliInput');
+                const cmd = input.value.trim();
+                const output = document.getElementById('kali-output');
+                
+                output.innerHTML += `<div>root@kali-iahaker:~# ${cmd}</div>`;
+                input.value = '';
+
+                let resp = "";
+                const c = cmd.toLowerCase();
+                if(c === 'help') {
+                    resp = "Comandos disponibles: nmap, whoami, uname -a, ifconfig, cat /etc/passwd, clear, reboot";
+                } else if(c === 'whoami') {
+                    resp = "root (Xirox - Superusuario)";
+                } else if(c.startsWith('nmap')) {
+                    resp = "Starting Nmap scan on target... Host is up (0.002s latency). Port 80/tcp OPEN, Port 443/tcp OPEN (IAHAKER.COM)";
+                } else if(c === 'uname -a') {
+                    resp = "Linux kali-iahaker 6.12.0-kali-amd64 #1 SMP PREEMPT_DYNAMIC Kali GNU/Linux x86_64";
+                } else if(c === 'ifconfig') {
+                    resp = "eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500 inet 10.24.8.9 netmask 255.255.255.0 broadcast 10.24.8.255";
+                } else if(c === 'cat /etc/passwd') {
+                    resp = "root:x:0:0:root:/root:/bin/bash\nxirox:x:1000:1000:Xirox Admin,,,:/home/xirox:/bin/zsh";
+                } else if(c === 'clear') {
+                    output.innerHTML = '';
+                    return;
+                } else if(c === '') {
+                    resp = "";
+                } else {
+                    resp = `bash: ${cmd}: command not found. Type 'help' for available utilities.`;
+                }
+
+                if(resp) {
+                    output.innerHTML += `<div style="color: #a78bfa; white-space: pre-line;">${resp}</div>`;
+                }
+                output.scrollTop = output.scrollHeight;
+            }
         }
 
         function openAppSession() {
@@ -186,34 +228,10 @@
 
             setTimeout(() => {
                 let prefix = "IAHAKER [Simple]";
-                if(currentUser.plan === 'hacker') prefix = "KALI >$ [MODO HACKER]";
-                if(currentUser.plan === 'unlimited') prefix = "INFINITY >$ [SIN LÍMITES]";
                 if(currentUser.isAdmin) prefix = "🛡️ [PANEL DE CONTROL XIROX]";
-
-                chat.innerHTML += `<div class="message bot">${prefix} > ${currentUser.name}: "${text}" (Procesado correctamente)</div>`;
+                chat.innerHTML += `<div class="message bot">${prefix} > ${currentUser.name}: "${text}" (Procesado 24/7)</div>`;
                 chat.scrollTop = chat.scrollHeight;
             }, 500);
-        }
-
-        function requestPlan(planKey) {
-            activePlanKey = planKey;
-            const plansData = {
-                hacker: { name: "Modo Hacker", price: "5.00" },
-                unlimited: { name: "Modo Sin Límites", price: "15.00" }
-            };
-            const p = plansData[planKey];
-            document.getElementById('paymentBox').style.display = 'block';
-            document.getElementById('paymentTitle').innerText = `Pagar ${p.name} (${p.price} USDT)`;
-            document.getElementById('walletInfo').innerHTML = `Envía <b>${p.price} USDT</b> (BEP20):<br><b>0x1a893Dab175dBeb8Ea8d3e2115F4ECB2655397aA</b>`;
-        }
-
-        function verifyPayment() {
-            const txHash = document.getElementById('txHashInput').value.trim();
-            if(!txHash) return alert('Introduce el Hash de la transacción.');
-            currentUser.plan = activePlanKey;
-            alert('¡Pago verificado y plan activado con éxito!');
-            document.getElementById('paymentBox').style.display = 'none';
-            document.getElementById('userStatus').innerText = `Modo: ${activePlanKey.toUpperCase()}`;
         }
     </script>
 </body>

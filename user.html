@@ -41,7 +41,43 @@
         #payment-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 20px; z-index: 100; }
         .modal-content { background: #07070b; border: 1px solid #7c3aed; border-radius: 10px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
     </style>
+
+    <!-- Firebase Auth Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "TU_API_KEY_DE_FIREBASE",
+        authDomain: "tu-proyecto.firebaseapp.com",
+        projectId: "tu-proyecto",
+        storageBucket: "tu-proyecto.appspot.com",
+        messagingSenderId: "TU_SENDER_ID",
+        appId: "TU_APP_ID"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      function loginWithGoogle() {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          auth.signInWithPopup(provider)
+            .then((result) => {
+                const user = result.user;
+                alert("¡Bienvenido " + user.displayName + "!");
+                location.reload();
+            })
+            .catch((error) => {
+                alert("Error de autenticación: " + error.message);
+            });
+      }
+
+      auth.onAuthStateChanged((user) => {
+          if (user) {
+              console.log("Sesión activa de: " + user.email);
+          }
+      });
+    </script>
 </head>
+
 <body>
 
     <div id="auth-screen">

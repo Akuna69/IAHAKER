@@ -11,10 +11,11 @@
         .auth-card { background: #161822; border: 1px solid #7c3aed; padding: 25px; border-radius: 10px; width: 320px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 0 20px rgba(124, 58, 237, 0.3); }
         .auth-card h2 { color: #a78bfa; text-align: center; margin-top: 0; margin-bottom: 5px; }
         .auth-card input, .auth-card select { background: #09090b; border: 1px solid #3f3f46; color: #e1e1e6; padding: 10px; border-radius: 6px; outline: none; font-family: monospace; width: 100%; box-sizing: border-box; }
-        .auth-card button { background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
-        .tab-container { display: flex; margin-bottom: 10px; border-bottom: 1px solid #3f3f46; }
-        .tab { flex: 1; padding: 8px; text-align: center; cursor: pointer; color: #a1a1aa; font-weight: bold; font-size: 13px; }
-        .tab.active { color: #a78bfa; border-bottom: 2px solid #7c3aed; }
+        .btn-main { background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-family: monospace; }
+        .btn-switch { background: transparent; color: #a78bfa; border: 1px solid #7c3aed; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-family: monospace; font-size: 11px; }
+        .tab-buttons { display: flex; gap: 8px; margin-bottom: 10px; }
+        .tab-btn { flex: 1; padding: 8px; background: #09090b; border: 1px solid #3f3f46; color: #a1a1aa; border-radius: 6px; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 12px; }
+        .tab-btn.active { background: #7c3aed; color: white; border-color: #7c3aed; }
         #main-container { display: flex; flex: 1; overflow: hidden; display: none; }
         #chat-section { flex: 2; display: flex; flex-direction: column; border-right: 1px solid #27272a; }
         #chat-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
@@ -34,12 +35,12 @@
     <div id="auth-modal">
         <div class="auth-card">
             <h2>IAHAKER.COM</h2>
-            <div class="tab-container">
-                <div id="tabReg" class="tab active" onclick="switchTab('register')">Registrarse</div>
-                <div id="tabLog" class="tab" onclick="switchTab('login')">Iniciar Sesión</div>
+            <div class="tab-buttons">
+                <button id="btnTabReg" class="tab-btn active" onclick="switchMode('register')">Registrarse</button>
+                <button id="btnTabLog" class="tab-btn" onclick="switchMode('login')">Iniciar Sesión</button>
             </div>
 
-            <!-- Formulario de Registro -->
+            <!-- Opción 1: Registro -->
             <div id="formRegister" style="display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="regUser" placeholder="Nombre de usuario">
                 <input type="email" id="regEmail" placeholder="Correo electrónico">
@@ -47,14 +48,14 @@
                 <select id="regCountry">
                     <option value="" disabled selected>Selecciona tu país</option>
                 </select>
-                <button onclick="handleRegister()">Crear Cuenta</button>
+                <button class="btn-main" onclick="handleRegister()">Crear Cuenta</button>
             </div>
 
-            <!-- Formulario de Inicio de Sesión -->
+            <!-- Opción 2: Iniciar Sesión (Correo y Contraseña) -->
             <div id="formLogin" style="display: none; flex-direction: column; gap: 10px;">
                 <input type="email" id="logEmail" placeholder="Correo electrónico" value="yerandysff@gmail.com">
                 <input type="password" id="logPass" placeholder="Contraseña" value="@Yerandys">
-                <button onclick="handleLogin()">Entrar al Sistema</button>
+                <button class="btn-main" onclick="handleLogin()">Entrar al Sistema</button>
             </div>
         </div>
     </div>
@@ -111,15 +112,15 @@
         countries.forEach(c => { let o = document.createElement('option'); o.value = c; o.innerHTML = c; sel.appendChild(o); });
         sel.value = "Cuba";
 
-        function switchTab(tab) {
-            if(tab === 'register') {
-                document.getElementById('tabReg').classList.add('active');
-                document.getElementById('tabLog').classList.remove('active');
+        function switchMode(mode) {
+            if(mode === 'register') {
+                document.getElementById('btnTabReg').classList.add('active');
+                document.getElementById('btnTabLog').classList.remove('active');
                 document.getElementById('formRegister').style.display = 'flex';
                 document.getElementById('formLogin').style.display = 'none';
             } else {
-                document.getElementById('tabLog').classList.add('active');
-                document.getElementById('tabReg').classList.remove('active');
+                document.getElementById('btnTabLog').classList.add('active');
+                document.getElementById('btnTabReg').classList.remove('active');
                 document.getElementById('formLogin').style.display = 'flex';
                 document.getElementById('formRegister').style.display = 'none';
             }
@@ -147,7 +148,7 @@
             const email = document.getElementById('logEmail').value.trim();
             const pass = document.getElementById('logPass').value.trim();
 
-            if(!email || !pass) return alert('Introduce correo y contraseña.');
+            if(!email || !pass) return alert('Introduce tu correo y contraseña.');
 
             if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
                 currentUser.name = "Xirox";

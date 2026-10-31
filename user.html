@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAHAKER.COM - AI Executive Assistant</title>
+    <style>
+        body { background-color: #050508; color: #e1e1e6; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        header { border-bottom: 1px solid #7c3aed; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { color: #a78bfa; font-size: 14px; margin: 0; }
+        .chat-container { flex: 1; display: flex; flex-direction: column; background: #0b0c10; border: 1px solid #1f2231; border-radius: 8px; padding: 10px; overflow: hidden; box-shadow: inset 0 0 15px rgba(124, 58, 237, 0.15); }
+        #chat-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; font-size: 13px; }
+        .msg { padding: 10px; border-radius: 6px; line-height: 1.4; word-break: break-word; }
+        .msg.user { background: #7c3aed; color: white; align-self: flex-end; max-width: 85%; }
+        .msg.ai { background: #151821; border-left: 3px solid #a78bfa; align-self: flex-start; max-width: 90%; }
+        .input-area { display: flex; gap: 6px; }
+        .input-area input { flex: 1; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 9px; border-radius: 6px; outline: none; }
+        .input-area button { background: #7c3aed; color: white; border: none; padding: 9px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧠 IAHAKER.COM [AI CORE]</h1>
+        <span style="font-size: 11px; color: #22c55e;">● Online</span>
+    </header>
+
+    <div class="chat-container">
+        <div id="chat-output">
+            <div class="msg ai">
+                <strong>[IAHAKER EXECUTIVE]:</strong> Sistemas operativos enlazados. Asistente de negocios y análisis estratégico listo. ¿Cuál es su consulta u objetivo?
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Escriba su consulta ejecutiva..." onkeydown="handleEnter(event)">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if(!text) return;
+            const output = document.getElementById('chat-output');
+            output.innerHTML += `<div class="msg user"><strong>Tú:</strong> ${text}</div>`;
+            input.value = '';
+
+            setTimeout(() => {
+                let response = generateExecutiveResponse(text);
+                output.innerHTML += `<div class="msg ai"><strong>[IAHAKER EXECUTIVE]:</strong><br>${response}</div>`;
+                output.scrollTop = output.scrollHeight;
+            }, 400);
+        }
+
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+
+        function generateExecutiveResponse(query) {
+            return `<strong>Análisis Estratégico:</strong> "${query}"<br>` +
+                   `• <strong>Opciones viables:</strong><br>` +
+                   `  1. Ejecución directa mediante automatización de procesos.<br>` +
+                   `  2. Reestructuración de parámetros operativos.<br>` +
+                   `<em>Especifique métricas o datos exactos para proceder con la ejecución inmediata.</em>`;
+        }
+    </script>
+</body>
+</html>

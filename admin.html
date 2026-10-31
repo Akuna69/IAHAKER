@@ -23,31 +23,28 @@
 <body>
     <header>
         <h1>🛡️ IAHAKER ADMIN ROOT</h1>
-        <span style="color: #00ff66; font-size: 10px;">● Ajustado OK</span>
+        <span style="color: #00ff66; font-size: 10px;">● Control Activo</span>
     </header>
 
     <div class="main-scroll">
         <div class="card">
             <h3>Estado del Sistema Root</h3>
             <p style="margin: 4px 0; font-size: 11px;"><strong>Administrador:</strong> Xirox (yerandysff@gmail.com)</p>
-            <p style="margin: 4px 0; font-size: 11px;"><strong>Nivel:</strong> Acceso Total / Control de Suscripciones</p>
+            <p style="margin: 4px 0; font-size: 11px;"><strong>Nivel:</strong> Validación de Transacciones y Suscripciones</p>
         </div>
 
         <div class="card">
-            <h3>Control y Gestión de Usuarios & Suscripciones</h3>
-            <div id="admin-user-list">
-                <!-- Se inyecta dinámicamente -->
-            </div>
+            <h3>Gestión de Clientes & Pagos Reales</h3>
+            <div id="admin-user-list"></div>
             <br>
             <button onclick="addNewUser()" style="width: 100%;">+ Registrar Nuevo Usuario</button>
         </div>
     </div>
 
     <script>
-        // Obtener base de datos de usuarios unificada del almacenamiento local
         let dbUsers = JSON.parse(localStorage.getItem('iahaker_users')) || [
             { name: "Xirox", email: "yerandysff@gmail.com", plan: "Enterprise / Root" },
-            { name: "Yerandys", email: "yerandys001@gmail.com", plan: "Hacker Pro" }
+            { name: "Yerandys", email: "yerandys001@gmail.com", plan: "Estándar (Pendiente de Pago)" }
         ];
 
         function renderAdminUsers() {
@@ -62,16 +59,15 @@
                     <div class="user-info">
                         <span style="color: #fff; font-weight: bold;">${u.name}</span>
                         <span style="color: #888; font-size: 10px;">${u.email}</span>
-                        <span style="color: #22c55e; font-size: 10px; margin-top: 2px;">Plan: [${u.plan || 'Estándar'}]</span>
+                        <span style="color: #eab308; font-size: 10px; margin-top: 2px;">Plan/TX: [${u.plan || 'Estándar'}]</span>
                     </div>
                     <div class="user-actions">
-                        <button onclick="changePlan(${index})">Plan</button>
+                        <button onclick="changePlan(${index})">Aprobar/Plan</button>
                         <button class="danger" onclick="deleteUser(${index})">Eliminar</button>
                     </div>
                 </div>
-            `).join('');
+            \`).join('');
             
-            // Sincronizar con localStorage
             localStorage.setItem('iahaker_users', JSON.stringify(dbUsers));
         }
 
@@ -93,11 +89,11 @@
         }
 
         function changePlan(index) {
-            let newPlan = prompt("Asignar nuevo plan (Ej: Estándar, Hacker Pro, Enterprise):", dbUsers[index].plan);
+            let newPlan = prompt("Asignar estado o plan verificado (Ej: Hacker Pro - Aprobado, Enterprise, Estándar):", dbUsers[index].plan);
             if(newPlan) {
                 dbUsers[index].plan = newPlan;
                 renderAdminUsers();
-                alert("Suscripción actualizada correctamente.");
+                alert("Suscripción y verificación actualizadas correctamente.");
             }
         }
 

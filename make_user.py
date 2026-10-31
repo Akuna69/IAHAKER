@@ -1,0 +1,272 @@
+code = """<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IAHAKER.COM - Client Portal & AI Core</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #030305; color: #e1e1e6; font-family: system-ui, -apple-system, sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { border-bottom: 1px solid #7c3aed; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: #07070b; flex-shrink: 0; }
+        h1 { color: #a78bfa; font-size: 14px; margin: 0; }
+        
+        #auth-screen { display: flex; flex: 1; justify-content: center; align-items: center; padding: 15px; overflow-y: auto; }
+        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 10px; padding: 20px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 0 15px rgba(124, 58, 237, 0.2); }
+        .tabs { display: flex; margin-bottom: 15px; background: #151821; border-radius: 6px; padding: 3px; }
+        .tab { flex: 1; background: transparent; border: none; color: #a1a1aa; padding: 8px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .tab.active { background: #7c3aed; color: white; }
+        input { width: 100%; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 10px; border-radius: 6px; margin-bottom: 10px; outline: none; font-size: 13px; }
+        .btn-main { width: 100%; background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+
+        #main-app { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+        .menu-bar { display: flex; background: #07070b; border-bottom: 1px solid #27272a; padding: 8px 10px; gap: 6px; flex-shrink: 0; }
+        .menu-btn { flex: 1; background: #151821; border: 1px solid #27272a; color: #a1a1aa; padding: 6px 4px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; text-align: center; }
+        .menu-btn.active { background: #7c3aed; color: white; border-color: #7c3aed; }
+
+        .view-section { flex: 1; display: none; flex-direction: column; padding: 10px; overflow-y: auto; }
+        .view-section.active { display: flex; }
+
+        #chat-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; font-size: 12px; }
+        .msg { padding: 10px; border-radius: 6px; line-height: 1.4; word-break: break-word; white-space: pre-line; }
+        .msg.user { background: #7c3aed; color: white; align-self: flex-end; max-width: 85%; }
+        .msg.ai { background: #151821; border-left: 3px solid #22c55e; align-self: flex-start; max-width: 95%; }
+        .input-area { display: flex; gap: 6px; flex-shrink: 0; }
+        .input-area input { flex: 1; margin: 0; font-family: monospace; }
+        .input-area button { background: #7c3aed; color: white; border: none; padding: 0 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        .card-box { background: #07070b; border: 1px solid #7c3aed; border-radius: 8px; padding: 15px; margin-bottom: 10px; text-align: center; }
+        .card-box h3 { color: #a78bfa; margin-top: 0; font-size: 14px; }
+        .price { font-size: 16px; font-weight: bold; color: #22c55e; margin-bottom: 8px; }
+        
+        #payment-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 20px; z-index: 100; }
+        .modal-content { background: #07070b; border: 1px solid #7c3aed; border-radius: 10px; padding: 20px; width: 100%; max-width: 320px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h2 style="color: #a78bfa; margin-top: 0; font-size: 16px;">IAHAKER.COM</h2>
+            <div class="tabs">
+                <button class="tab active" id="tabReg" onclick="setAuthMode('register')">Registrarse</button>
+                <button class="tab" id="tabLog" onclick="setAuthMode('login')">Iniciar Sesión</button>
+            </div>
+            <input type="text" id="authName" placeholder="Tu Nombre">
+            <input type="email" id="authEmail" placeholder="Correo electrónico">
+            <input type="password" id="authPass" placeholder="Contraseña">
+            <button class="btn-main" id="authBtn" onclick="handleAuth()">Crear Cuenta</button>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <header>
+            <h1>CLIENT PORTAL</h1>
+            <button onclick="logout()" style="background:#450a0a; border:1px solid #ef4444; color:#f87171; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:bold;">Salir</button>
+        </header>
+
+        <div class="menu-bar">
+            <button class="menu-btn active" onclick="switchView('chat', this)">💬 IA & Web</button>
+            <button class="menu-btn" onclick="switchView('plans', this)">💎 Comprar Planes</button>
+            <button class="menu-btn" onclick="switchView('profile', this)">👤 Mi Perfil</button>
+        </div>
+
+        <div id="view-chat" class="view-section active">
+            <div id="chat-output">
+                <div class="msg ai">
+<strong>[IAHAKER GLOBAL AI]:</strong> 
+¡Hola! Conexión global a internet y base de datos técnica listas. Pregúntame lo que necesites o pide paquetes de programación.
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Escribe tu consulta o saludo..." onkeydown="handleEnter(event)">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+
+        <div id="view-plans" class="view-section">
+            <h2 style="color: #a78bfa; font-size: 14px; margin-top:0;">Selecciona tu Suscripción</h2>
+            
+            <div class="card-box">
+                <h3>Plan Hacker Pro</h3>
+                <div class="price">$9.99 / mes</div>
+                <p style="font-size: 11px; color: #a1a1aa; margin-bottom: 10px;">Acceso completo a scripts avanzados, soporte prioritario y herramientas de red.</p>
+                <button class="btn-main" onclick="openPaymentModal('Hacker Pro', '$9.99')">Pagar y Enviar Comprobante</button>
+            </div>
+
+            <div class="card-box">
+                <h3>Plan Enterprise / Root</h3>
+                <div class="price">$29.99 / mes</div>
+                <p style="font-size: 11px; color: #a1a1aa; margin-bottom: 10px;">Acceso total a servidores privados, automatización y asistencia IA ilimitada.</p>
+                <button class="btn-main" onclick="openPaymentModal('Enterprise / Root', '$29.99')">Pagar y Enviar Comprobante</button>
+            </div>
+        </div>
+
+        <div id="view-profile" class="view-section">
+            <div class="card-box" style="text-align: left;">
+                <h3 style="border-bottom: 1px solid #27272a; padding-bottom: 6px;">Información de Cuenta</h3>
+                <p style="font-size: 12px; margin: 6px 0;"><strong>Nombre:</strong> <span id="profileName">-</span></p>
+                <p style="font-size: 12px; margin: 6px 0;"><strong>Correo:</strong> <span id="profileEmail">-</span></p>
+                <p style="font-size: 12px; margin: 6px 0;"><strong>Suscripción Activa:</strong> <span id="profilePlan" style="color: #eab308; font-weight: bold;">Estándar (Pendiente de Verificación)</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-modal">
+        <div class="modal-content">
+            <h3 style="color: #a78bfa; margin-top:0;" id="modalPlanTitle">Pago de Suscripción</h3>
+            <p style="font-size: 11px; color: #ccc; text-align: left; margin-bottom: 10px;">
+                Realice el pago real a la dirección asignada del administrador e introduzca el Hash o comprobante:
+            </p>
+            <div style="background: #000; padding: 8px; border: 1px dashed #7c3aed; font-size: 10px; color: #22c55e; word-break: break-all; margin-bottom: 10px;">
+                DIRECCIÓN DE PAGO:<br><strong>0xIAHAKER_SECURE_PAYMENT_NODE_961025</strong>
+            </div>
+            <input type="text" id="txHashInput" placeholder="ID de Transacción / Hash / Comprobante">
+            <button class="btn-main" onclick="submitRealPayment()">Confirmar Transacción Real</button>
+            <button onclick="closePaymentModal()" style="background: transparent; border: none; color: #888; font-size: 11px; margin-top: 8px; cursor: pointer;">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        let authMode = 'register';
+        let currentUser = null;
+        let selectedPlanForPayment = '';
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('tabReg').classList.toggle('active', mode === 'register');
+            document.getElementById('tabLog').classList.toggle('active', mode === 'login');
+            document.getElementById('authName').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('authBtn').innerText = mode === 'register' ? 'Crear Cuenta' : 'Iniciar Sesión';
+        }
+
+        function handleAuth() {
+            const name = document.getElementById('authName').value.trim();
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPass').value.trim();
+
+            if(!email || !pass || (authMode === 'register' && !name)) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('iahaker_users')) || [];
+
+            if(authMode === 'register') {
+                if(users.some(u => u.email === email)) {
+                    alert("Este correo ya está registrado.");
+                    return;
+                }
+                const newUser = { name, email, pass, plan: 'Estándar (Pendiente de Pago)' };
+                users.push(newUser);
+                localStorage.setItem('iahaker_users', JSON.stringify(users));
+                currentUser = newUser;
+                alert("¡Cuenta creada con éxito!");
+            } else {
+                const found = users.find(u => u.email === email && u.pass === pass);
+                if(!found && !(email === "yerandysff@gmail.com" && pass === "@Yerandys")) {
+                    alert("Correo o contraseña incorrectos.");
+                    return;
+                }
+                currentUser = found || { name: "Xirox", email, plan: "Enterprise / Root", pass: "@Yerandys" };
+            }
+
+            loadUserSession();
+        }
+
+        function loadUserSession() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            document.getElementById('profileName').innerText = currentUser.name;
+            document.getElementById('profileEmail').innerText = currentUser.email;
+            document.getElementById('profilePlan').innerText = currentUser.plan || 'Estándar';
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('auth-screen').style.display = 'flex';
+        }
+
+        function switchView(viewName, btn) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function openPaymentModal(planName, price) {
+            selectedPlanForPayment = planName;
+            document.getElementById('modalPlanTitle').innerText = \`Comprar \${planName} (\${price})\`;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+            document.getElementById('txHashInput').value = '';
+        }
+
+        function submitRealPayment() {
+            const txHash = document.getElementById('txHashInput').value.trim();
+            if(!txHash) {
+                alert("Debe introducir el comprobante o ID de la transacción real.");
+                return;
+            }
+
+            currentUser.plan = \`\${selectedPlanForPayment} (Verificando TX)\`;
+            
+            let users = JSON.parse(localStorage.getItem('iahaker_users')) || [];
+            let index = users.findIndex(u => u.email === currentUser.email);
+            if(index !== -1) {
+                users[index].plan = currentUser.plan;
+                localStorage.setItem('iahaker_users', JSON.stringify(users));
+            }
+
+            document.getElementById('profilePlan').innerText = currentUser.plan;
+            closePaymentModal();
+            alert("¡Comprobante enviado! Su pago está en proceso de verificación por el administrador.");
+            switchView('profile', document.querySelectorAll('.menu-btn')[2]);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if(!text) return;
+            const output = document.getElementById('chat-output');
+            output.innerHTML += \`<div class="msg user"><strong>Tú:</strong> \${text}</div>\`;
+            input.value = '';
+
+            const loadingId = 'load_' + Date.now();
+            output.innerHTML += \`<div class="msg ai" id="\${loadingId}">🌐 Buscando en la red global para "\${text}"...</div>\`;
+            output.scrollTop = output.scrollHeight;
+
+            setTimeout(() => {
+                let response = getGlobalSearchResponse(text);
+                document.getElementById(loadingId).innerHTML = \`<strong>[IAHAKER GLOBAL SEARCH]:</strong>\\n\${response}\`;
+                output.scrollTop = output.scrollHeight;
+            }, 600);
+        }
+
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+
+        function getGlobalSearchResponse(query) {
+            const q = query.toLowerCase();
+            if(q.includes('hola') || q.includes('saludos') || q.includes('buenos dias')) {
+                return \`¡Hola! Qué gusto saludarte. Conexión global establecida. ¿En qué te puedo ayudar hoy? Puedes pedirme comandos, librerías o consultas de internet.\`;
+            } else if(q.includes('python')) {
+                return \`📦 **Paquetes Python globales:**\\n- pip install requests flask fastapi numpy pandas torch scapy\`;
+            } else if(q.includes('node') || q.includes('js')) {
+                return \`📦 **Paquetes Node.js globales:**\\n- npm install express cors nodemon mongoose prisma typescript\`;
+            } else if(q.includes('termux') || q.includes('terminal')) {
+                return \`⚙️ **Comandos Termux / Red:**\\n- pkg update && pkg install nmap curl wget git python nodejs clang -y\`;
+            } else {
+                return \`🌐 **Resultado Global en Internet para:** "\${query}"\\n- Consulta procesada con éxito a través de los nodos globales de IAHAKER. Para obtener scripts avanzados o información restringida, asegúrate de activar tu suscripción Pro o Enterprise verificada por el administrador.\`;
+            }
+        }
+    </script>
+</body>
+</html>
+"""
+
+with open("user.html", "w", encoding="utf-8") as f:
+    f.write(code)
+print("¡Archivo user.html creado con éxito!")

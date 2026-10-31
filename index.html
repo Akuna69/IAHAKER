@@ -3,159 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER.COM - Executive AI & Security Core</title>
+    <title>IAHAKER.COM - Acceso Social</title>
     <style>
-        body { background-color: #050508; color: #e1e1e6; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7c3aed; padding-bottom: 8px; margin-bottom: 10px; }
-        h1 { color: #a78bfa; font-size: 16px; margin: 0; }
-        .main-container { display: flex; flex: 1; gap: 10px; overflow: hidden; }
-        @media(max-width: 768px) { .main-container { flex-direction: column; overflow-y: auto; } }
-        .chat-section { flex: 2; display: flex; flex-direction: column; background: #0b0c10; border: 1px solid #1f2231; border-radius: 8px; padding: 10px; }
-        #chat-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; font-size: 13px; }
-        .msg { padding: 10px; border-radius: 6px; line-height: 1.4; word-break: break-word; }
-        .msg.user { background: #7c3aed; color: white; align-self: flex-end; max-width: 85%; }
-        .msg.ai { background: #151821; border-left: 3px solid #a78bfa; align-self: flex-start; max-width: 90%; }
-        .chat-input-area { display: flex; gap: 6px; }
-        .chat-input-area input { flex: 1; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 8px; border-radius: 6px; outline: none; }
-        .chat-input-area button { background: #7c3aed; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 10px; max-height: 100%; overflow-y: auto; }
-        .card { background: #0b0c10; border: 1px solid #1f2231; border-radius: 8px; padding: 10px; font-size: 12px; }
-        .card h3 { color: #a78bfa; margin-top: 0; font-size: 13px; border-bottom: 1px solid #27272a; padding-bottom: 4px; }
+        body { background-color: #030305; color: #e1e1e6; font-family: monospace; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 30px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
+        h2 { color: #a78bfa; margin-bottom: 5px; font-size: 20px; }
+        p { color: #888; font-size: 12px; margin-bottom: 25px; }
+        .btn-social { width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 13px; text-decoration: none; }
+        .btn-google { background: #ffffff; color: #000; }
+        .btn-telegram { background: #229ed9; color: #fff; }
+        .btn-facebook { background: #1877f2; color: #fff; }
     </style>
 </head>
 <body>
 
-    <!-- Panel de Autenticación Social IAHAKER.COM -->
-    <div id="social-auth-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 3, 5, 0.95); display: flex; justify-content: center; align-items: center; z-index: 9999; font-family: monospace;">
-        <div style="background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 30px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4);">
-            <h2 style="color: #a78bfa; margin-bottom: 5px; font-size: 20px;">IAHAKER.COM</h2>
-            <p style="color: #888; font-size: 12px; margin-bottom: 25px;">Inicia sesión o regístrate con un solo toque</p>
+    <div class="auth-card" id="auth-box">
+        <h2>IAHAKER.COM</h2>
+        <p>Inicia sesión o regístrate</p>
 
-            <button onclick="handleSocialLogin('Google')" style="width: 100%; background: #ffffff; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 13px;">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Continuar con Google
-            </button>
+        <button onclick="socialLogin('Google')" class="btn-social btn-google">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Continuar con Google
+        </button>
 
-            <button onclick="handleSocialLogin('Telegram')" style="width: 100%; background: #229ed9; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 13px;">
-                <img src="https://www.svgrepo.com/show/475700/telegram.svg" width="18" height="18"> Continuar con Telegram
-            </button>
+        <button onclick="socialLogin('Telegram')" class="btn-social btn-telegram">
+            <img src="https://www.svgrepo.com/show/475700/telegram.svg" width="18" height="18"> Continuar con Telegram
+        </button>
 
-            <button onclick="handleSocialLogin('Facebook')" style="width: 100%; background: #1877f2; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px;">
-                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" height="18"> Continuar con Facebook
-            </button>
-        </div>
+        <button onclick="socialLogin('Facebook')" class="btn-social btn-facebook">
+            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="18" height="18"> Continuar con Facebook
+        </button>
     </div>
 
     <script>
-        function handleSocialLogin(provider) {
-            alert("Autenticación exitosa con " + provider);
+        function socialLogin(provider) {
+            alert("Autenticación con " + provider + " exitosa.");
             localStorage.setItem("iahaker_auth", "true");
-            document.getElementById("social-auth-modal").style.display = "none";
+            document.getElementById("auth-box").innerHTML = "<h2 style='color: #22c55e;'>¡Bienvenido al sistema!</h2><p style='color: #aaa;'>Conectado mediante " + provider + "</p>";
         }
-        
-        window.addEventListener("DOMContentLoaded", () => {
-            if(localStorage.getItem("iahaker_auth") === "true") {
-                const modal = document.getElementById("social-auth-modal");
-                if(modal) modal.style.display = "none";
-            }
-        });
     </script>
-
-    <header>
-        <h1>IAHAKER.COM [EXECUTIVE CORE]</h1>
-        <span style="font-size: 11px; color: #22c55e;">● Sistema Activo (Xirox)</span>
-    </header>
-
-    <div class="main-container">
-        <!-- SECCIÓN DE CHAT EJECUTIVO -->
-        <div class="chat-section">
-            <div id="chat-output">
-                <div class="msg ai">
-                    <strong>[IAHAKER EXECUTIVE]:</strong> Saludos, Xirox. Sistema operativo y configurado en modo analítico y de negocios. Presente su requerimiento u objetivo financiero/técnico para estructurar opciones y soluciones inmediatas.
-                </div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="userInput" placeholder="Escriba su consulta de negocios u operativa..." onkeydown="handleChatEnter(event)">
-                <button onclick="sendChatMessage()">Enviar</button>
-            </div>
-        </div>
-
-        <!-- PANELES LATERALES -->
-        <div class="sidebar">
-            <div class="card">
-                <h3>Panel Admin Xirox</h3>
-                <p><strong>Estado:</strong> Acceso Ilimitado 24/7</p>
-                <p><strong>Nivel:</strong> Root / Administrador</p>
-            </div>
-            <div class="card">
-                <h3>Control de Usuarios</h3>
-                <p>• Xirox (yerandysff@gmail.com) - [ADMIN]</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function sendChatMessage() {
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-            if(!text) return;
-
-            const output = document.getElementById('chat-output');
-            output.innerHTML += `<div class="msg user"><strong>Tú:</strong> ${text}</div>`;
-            input.value = '';
-
-            // Respuesta inteligente con enfoque de negocios y opciones directas
-            setTimeout(() => {
-                let response = generateBusinessResponse(text);
-                output.innerHTML += `<div class="msg ai"><strong>[IAHAKER EXECUTIVE]:</strong><br>${response}</div>`;
-                output.scrollTop = output.scrollHeight;
-            }, 400);
-        }
-
-        function handleChatEnter(e) {
-            if(e.key === 'Enter') sendChatMessage();
-        }
-
-        function generateBusinessResponse(query) {
-            const q = query.toLowerCase();
-            if(q.includes('gasto') || q.includes('base de dato') || q.includes('dinero') || q.includes('finanza')) {
-                return `<strong>Análisis Financiero y Estructuración de Gastos:</strong><br>` +
-                       `1. <strong>Optimización de Capital:</strong> No existen registros de bases de datos locales externas conectadas. Recomiendo estructurar un registro centralizado en JSON o SQL.<br>` +
-                       `2. <strong>Opciones de Ejecución:</strong><br>` +
-                       `   - Opción A: Implementar un script de control de flujo de caja automatizado en Node.js.<br>` +
-                       `   - Opción B: Migrar la bitácora financiera a una interfaz cifrada dentro de este mismo entorno.<br>` +
-                       `<em>¿Qué estructura de almacenamiento prefiere desplegar?</em>`;
-            } else if(q.includes('estrategia') || q.includes('negocio') || q.includes('proyecto')) {
-                return `<strong>Visión Estratégica de Proyecto:</strong><br>` +
-                       `• <strong>Objetivo:</strong> Maximizar el rendimiento operativo reduciendo fricciones técnicas.<br>` +
-                       `• <strong>Línea de acción:</strong> Automatizar procesos mediante despliegues limpios en CI/CD y control total de activos.<br>` +
-                       `• <strong>Directriz:</strong> Enfoque orientado a resultados sin redundancias operativas.`;
-            } else {
-                return `<strong>Evaluación del requerimiento:</strong> "${query}"<br>` +
-                       `• <strong>Diagnóstico:</strong> Solicitud procesada bajo parámetros de alta eficiencia ejecutiva.<br>` +
-                       `• <strong>Opciones viables:</strong><br>` +
-                       `  1. Ejecución directa mediante automatización de scripts.<br>` +
-                       `  2. Reestructuración de parámetros operativos en el núcleo del sistema.<br>` +
-                       `<em>Especifique métricas o parámetros exactos para proceder con la implementación inmediata.</em>`;
-            }
-        }
-    
-        // Núcleo de IA Avanzado - IAHAKER.COM (index.html)
-        function getAIResponse(userText) {
-            const txt = userText.toLowerCase();
-            
-            if (txt.includes("muun") || txt.includes("meen") || txt.includes("wallet") || txt.includes("cripto")) {
-                return "Meen Wallet es tu proyecto enfocado en la gestión segura y recuperación de criptomonedas, optimizado con repositorios propios como meen-wallet-Beta, fast-recovery y phoenix-resurrect.";
-            } else if (txt.includes("termux") || txt.includes("linux") || txt.includes("kali") || txt.includes("comando") || txt.includes("root")) {
-                return "Entorno Termux activo en Android 15 con procesador Snapdragon 8 y 12 GB de RAM. Configurado con prompt KALI >$, aliases personalizados (ILLUMINATTI, r) y soporte avanzado para PRoot/Ubuntu.";
-            } else if (txt.includes("hola") || txt.includes("saludo") || txt.includes("hi")) {
-                return "¡Hola Yerandys! Núcleo IAHAKER.COM en línea y sincronizado. ¿Qué script, app o configuración técnica desarrollaremos hoy?";
-            } else if (txt.includes("github") || txt.includes("repo") || txt.includes("vercel")) {
-                return "Tus repositorios están enlazados bajo las cuentas Akuna69 e Iluminti, con despliegues automatizados listos para web y versiones nativas.";
-            } else {
-                return `Análisis técnico completado para: "${userText}". Como IA principal de IAHAKER.COM, estoy configurada para darte soporte experto en código, ciberseguridad, terminal Linux y desarrollo de apps.`;
-            }
-        }
-
-</script>
 </body>
 </html>

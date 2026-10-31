@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER.COM - Panel de IA</title>
+    <title>IAHAKER.COM - Núcleo Universal</title>
     <style>
         body { background-color: #030305; color: #e1e1e6; font-family: monospace; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
+        .auth-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 25px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
         h2 { color: #a78bfa; margin-bottom: 5px; font-size: 20px; }
         p { color: #888; font-size: 12px; margin-bottom: 20px; }
         .btn-social { width: 100%; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; font-size: 13px; text-decoration: none; }
@@ -14,10 +14,10 @@
         .btn-telegram { background: #229ed9; color: #fff; }
         .btn-facebook { background: #1877f2; color: #fff; }
         
-        /* Estilos del Chat de IA */
+        /* Chat Universal */
         #chat-container { display: none; text-align: left; }
-        #chat-box { height: 220px; overflow-y: auto; background: #030305; border: 1px solid #2d2d3d; border-radius: 6px; padding: 10px; margin-bottom: 10px; font-size: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .msg-ia { background: #1e1b4b; color: #c4b5fd; padding: 8px 10px; border-radius: 6px; max-width: 85%; }
+        #chat-box { height: 250px; overflow-y: auto; background: #030305; border: 1px solid #2d2d3d; border-radius: 6px; padding: 10px; margin-bottom: 10px; font-size: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .msg-ia { background: #1e1b4b; color: #c4b5fd; padding: 8px 10px; border-radius: 6px; max-width: 85%; line-height: 1.4; }
         .msg-user { background: #3b82f6; color: #fff; padding: 8px 10px; border-radius: 6px; max-width: 85%; align-self: flex-end; }
         .chat-input-area { display: flex; gap: 6px; }
         .chat-input-area input { flex: 1; background: #030305; border: 1px solid #7c3aed; color: #fff; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 12px; }
@@ -27,10 +27,10 @@
 <body>
 
     <div class="auth-card" id="main-card">
-        <!-- SECCIÓN DE LOGIN SOCIAL -->
+        <!-- LOGIN SOCIAL -->
         <div id="login-section">
             <h2>IAHAKER.COM</h2>
-            <p>Inicia sesión o regístrate</p>
+            <p>Acceso Universal con Plugins IA</p>
 
             <button onclick="socialLogin('Google')" class="btn-social btn-google">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" height="18"> Continuar con Google
@@ -45,17 +45,17 @@
             </button>
         </div>
 
-        <!-- SECCIÓN DEL CHAT DE IA (Oculta hasta iniciar sesión) -->
+        <!-- CHAT CON PLUGINS UNIVERSALES -->
         <div id="chat-container">
-            <h2 style="font-size: 16px; margin-bottom: 2px;">IAHAKER.COM // IA</h2>
+            <h2 style="font-size: 16px; margin-bottom: 2px;">IAHAKER.COM // PLUGINS</h2>
             <p id="user-status" style="margin-bottom: 10px; color: #22c55e;"></p>
             
             <div id="chat-box">
-                <div class="msg-ia">¡Hola Yerandys! Núcleo IA en línea. Pregúntame sobre Termux, Meen Wallet, scripts o desarrollo Android.</div>
+                <div class="msg-ia">Sistema conectado. Plugins activos para Linux, Termux, Android, criptomonedas y bases de datos. ¿Qué deseas consultar?</div>
             </div>
 
             <div class="chat-input-area">
-                <input type="text" id="user-input" placeholder="Escribe tu consulta técnica..." onkeypress="if(event.key === 'Enter') sendQuery()">
+                <input type="text" id="user-input" placeholder="Pregunta sobre cualquier tema, código o comando..." onkeypress="if(event.key === 'Enter') sendQuery()">
                 <button onclick="sendQuery()">Enviar</button>
             </div>
         </div>
@@ -71,19 +71,23 @@
         function showChat(provider) {
             document.getElementById("login-section").style.display = "none";
             document.getElementById("chat-container").style.display = "block";
-            document.getElementById("user-status").innerText = "Conectado vía " + provider;
+            document.getElementById("user-status").innerText = "Conectado vía " + provider + " (Plugins Habilitados)";
         }
 
+        // MOTOR DE PLUGINS Y RESPUESTAS UNIVERSALES
         function getAIResponse(txt) {
             txt = txt.toLowerCase();
-            if (txt.includes("muun") || txt.includes("meen") || txt.includes("wallet") || txt.includes("cripto")) {
-                return "Meen Wallet es tu proyecto enfocado en la gestión segura y recuperación de criptomonedas (meen-wallet-Beta, fast-recovery, phoenix-resurrect).";
-            } else if (txt.includes("termux") || txt.includes("linux") || txt.includes("kali") || txt.includes("comando")) {
-                return "Entorno Termux activo en Android 15 con Snapdragon 8 y 12 GB RAM. Configurado con prompt KALI >$ y aliases personalizados (ILLUMINATTI, r).";
-            } else if (txt.includes("github") || txt.includes("repo") || txt.includes("vercel")) {
-                return "Tus repositorios están enlazados en Akuna69 e Iluminti, listos para automatizaciones y despliegues web.";
+            
+            if (txt.includes("termux") || txt.includes("linux") || txt.includes("bash") || txt.includes("comando")) {
+                return "[Plugin: Linux/Termux] Análisis de comandos y scripts ejecutado. Puedes usar tus alias personalizados (ILLUMINATTI, r) o gestionar paquetes con pkg/apt.";
+            } else if (txt.includes("android") || txt.includes("apk") || txt.includes("snapdragon")) {
+                return "[Plugin: Android Dev] Datos del sistema: Compatible con Snapdragon 8, optimización de rendimiento y compilación de paquetes.";
+            } else if (txt.includes("github") || txt.includes("git") || txt.includes("repo")) {
+                return "[Plugin: Git/GitHub] Control de versiones activo para sincronizar repositorios y automatizar despliegues.";
+            } else if (txt.includes("wallet") || txt.includes("cripto") || txt.includes("bitcoin") || txt.includes("muun") || txt.includes("meen")) {
+                return "[Plugin: Cripto/Wallet] Módulo de gestión financiera y recuperación de carteras (Meen Wallet / fast-recovery) en línea.";
             } else {
-                return "Análisis completado para: "" + txt + "". Como IA de IAHAKER.COM, estoy lista para ayudarte con código, terminal Linux y ciberseguridad.";
+                return "[Plugin Universal] Consulta procesada sobre: "" + txt + "". Con los plugins activos, puedo ayudarte con cualquier estructura de datos, programación, redes o desarrollo técnico.";
             }
         }
 
@@ -93,12 +97,10 @@
             const text = input.value.trim();
             if(!text) return;
 
-            // Mensaje usuario
             box.innerHTML += `<div class="msg-user">${text}</div>`;
             input.value = "";
             box.scrollTop = box.scrollHeight;
 
-            // Respuesta IA
             setTimeout(() => {
                 const reply = getAIResponse(text);
                 box.innerHTML += `<div class="msg-ia">${reply}</div>`;
@@ -106,7 +108,6 @@
             }, 400);
         }
 
-        // Mantener sesión activa si ya entró antes
         window.addEventListener("DOMContentLoaded", () => {
             if(localStorage.getItem("iahaker_auth") === "true") {
                 const prov = localStorage.getItem("iahaker_provider") || "Social";

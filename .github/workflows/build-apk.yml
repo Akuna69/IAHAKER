@@ -1,0 +1,43 @@
+name: Compilar APKs de IAHAKER
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clonar Repositorio
+      uses: actions/checkout@v3
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Configurar Java (JDK 17)
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Instalar Dependencias y Capacitor
+      run: |
+        npm install
+        npm install @capacitor/cli @capacitor/core @capacitor/android
+        npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
+        npx cap add android
+
+    - name: Compilar APK de Android
+      run: |
+        cd android
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Subir APK Generado
+      uses: actions/upload-artifact@v3
+      with:
+        name: IAHAKER-App-Debug
+        path: android/app/build/outputs/apk/debug/app-debug.apk

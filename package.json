@@ -7,6 +7,9 @@
     "start": "node api/index.js"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
     "express": "^4.19.2"
   }
 }

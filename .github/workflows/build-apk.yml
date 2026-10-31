@@ -41,7 +41,6 @@ jobs:
     - name: Construir Proyecto Terminal
       run: |
         mkdir -p term-project/public
-        # Crear vista dedicada solo para la terminal y panel admin
         cat << 'TERMHTML' > term-project/public/index.html
         <!DOCTYPE html>
         <html lang="es">

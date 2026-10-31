@@ -29,13 +29,15 @@
         .card h3 { color: #a78bfa; margin-top: 0; margin-bottom: 5px; }
         .price { color: #22c55e; font-weight: bold; }
         
-        #kali-terminal { background: #050508; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 200px; box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.2); margin-top: 10px; }
+        #kali-terminal { background: #050508; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 190px; box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.2); margin-top: 10px; }
         #kali-output { flex: 1; overflow-y: auto; font-size: 11px; color: #22c55e; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; word-break: break-all; }
         .kali-prompt-line { display: flex; align-items: center; gap: 6px; border-top: 1px solid #1f2231; padding-top: 6px; }
         .kali-prompt-line span { color: #a78bfa; font-weight: bold; font-size: 11px; }
         .kali-prompt-line input { background: transparent; border: none; color: #e1e1e6; font-family: monospace; outline: none; flex: 1; font-size: 11px; }
 
-        .user-item { background: #09090b; border: 1px solid #3f3f46; padding: 8px; border-radius: 6px; margin-top: 6px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
+        .user-item { background: #09090b; border: 1px solid #3f3f46; padding: 8px; border-radius: 6px; margin-top: 6px; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+        .user-header { display: flex; justify-content: space-between; align-items: center; }
+        .btn-perm { padding: 3px 6px; font-size: 9px; font-weight: bold; border-radius: 4px; border: none; cursor: pointer; margin-left: 2px; }
     </style>
 </head>
 <body>
@@ -113,9 +115,13 @@
     </div>
 
     <script>
-        let registeredUsers = [
-            { name: "Xirox", email: "yerandysff@gmail.com", country: "Cuba", plan: "admin" }
-        ];
+        // Cargar usuarios guardados o iniciar con Xirox
+        let defaultUsers = [{ name: "Xirox", email: "yerandysff@gmail.com", country: "Cuba", plan: "admin" }];
+        let registeredUsers = JSON.parse(localStorage.getItem('iahaker_users')) || defaultUsers;
+
+        function saveUsers() {
+            localStorage.setItem('iahaker_users', JSON.stringify(registeredUsers));
+        }
 
         let currentUser = { name: '', email: '', isAdmin: false, plan: 'simple' };
         let activePlanKey = 'simple';
@@ -147,18 +153,21 @@
             
             if(!user || !email || !pass || !country) return alert('Rellena todos los campos.');
 
-            if(!registeredUsers.some(u => u.email === email)) {
-                registeredUsers.push({ name: user, email: email, country: country, plan: 'simple' });
+            let existing = registeredUsers.find(u => u.email === email);
+            if(!existing) {
+                existing = { name: user, email: email, country: country, plan: 'simple' };
+                registeredUsers.push(existing);
+                saveUsers();
             }
 
-            currentUser.name = user;
-            currentUser.email = email;
+            currentUser.name = existing.name;
+            currentUser.email = existing.email;
 
             if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
                 setAdminMode();
             } else {
                 currentUser.isAdmin = false;
-                currentUser.plan = 'simple';
+                currentUser.plan = existing.plan;
                 openAppSession();
             }
         }
@@ -174,14 +183,17 @@
                 setAdminMode();
             } else {
                 let username = email.split('@')[0];
-                currentUser.name = username;
-                currentUser.email = email;
-                currentUser.isAdmin = false;
-                currentUser.plan = 'simple';
-                
-                if(!registeredUsers.some(u => u.email === email)) {
-                    registeredUsers.push({ name: username, email: email, country: "Global", plan: 'simple' });
+                let existing = registeredUsers.find(u => u.email === email);
+                if(!existing) {
+                    existing = { name: username, email: email, country: "Global", plan: 'simple' };
+                    registeredUsers.push(existing);
+                    saveUsers();
                 }
+                
+                currentUser.name = existing.name;
+                currentUser.email = existing.email;
+                currentUser.isAdmin = false;
+                currentUser.plan = existing.plan;
                 openAppSession();
             }
         }
@@ -197,13 +209,31 @@
             openAppSession();
         }
 
+        function changeUserPlan(email, newPlan) {
+            let u = registeredUsers.find(user => user.email === email);
+            if(u) {
+                u.plan = newPlan;
+                saveUsers();
+                renderAdminPanel();
+                alert(`Plan de ${u.name} actualizado a: ${newPlan.toUpperCase()}`);
+            }
+        }
+
         function renderAdminPanel() {
             let usersHTML = '';
             registeredUsers.forEach(u => {
                 usersHTML += `
                     <div class="user-item">
-                        <div><b>${u.name}</b> (${u.country})<br><span style="color:#a1a1aa; font-size:10px;">${u.email}</span></div>
-                        <span style="color: ${u.plan === 'admin' ? '#7c3aed' : (u.plan === 'simple' ? '#22c55e' : '#3b82f6')}; font-weight:bold;">${u.plan.toUpperCase()}</span>
+                        <div class="user-header">
+                            <div><b>${u.name}</b> (${u.country})<br><span style="color:#a1a1aa; font-size:10px;">${u.email}</span></div>
+                            <span style="color: ${u.plan === 'admin' ? '#7c3aed' : (u.plan === 'simple' ? '#22c55e' : '#3b82f6')}; font-weight:bold;">${u.plan.toUpperCase()}</span>
+                        </div>
+                        ${u.plan !== 'admin' ? `
+                        <div style="display:flex; justify-content:flex-end; margin-top:4px;">
+                            <button class="btn-perm" style="background:#22c55e; color:black;" onclick="changeUserPlan('${u.email}', 'simple')">Gratis</button>
+                            <button class="btn-perm" style="background:#3b82f6; color:white;" onclick="changeUserPlan('${u.email}', 'hacker')">Hacker</button>
+                            <button class="btn-perm" style="background:#7c3aed; color:white;" onclick="changeUserPlan('${u.email}', 'unlimited')">Ilimitado</button>
+                        </div>` : ''}
                     </div>
                 `;
             });
@@ -227,8 +257,8 @@
                     </div>
                 </div>
                 <div class="card" style="border-color:#7c3aed;">
-                    <h3>👥 Usuarios Registrados</h3>
-                    <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+                    <h3>👥 Control de Usuarios (${registeredUsers.length})</h3>
+                    <div style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
                         ${usersHTML}
                     </div>
                 </div>
@@ -295,7 +325,10 @@
             
             currentUser.plan = activePlanKey;
             let found = registeredUsers.find(u => u.email === currentUser.email);
-            if(found) found.plan = activePlanKey;
+            if(found) {
+                found.plan = activePlanKey;
+                saveUsers();
+            }
 
             alert('¡Pago verificado y plan activado con éxito!');
             document.getElementById('paymentBox').style.display = 'none';
@@ -303,7 +336,6 @@
             if(currentUser.isAdmin) renderAdminPanel();
         }
 
-        // PETICIÓN REAL A API DE INTELIGENCIA ARTIFICIAL DINÁMICA
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
@@ -314,13 +346,24 @@
             input.value = '';
             chat.scrollTop = chat.scrollHeight;
 
-            // Indicador de "Escribiendo..."
+            const q = text.toLowerCase();
+            
+            // Si la consulta es sobre usuarios registrados
+            if(q.includes('usuario') || q.includes('registrado') || q.includes('cuantos')) {
+                setTimeout(() => {
+                    let userListText = registeredUsers.map(u => `• ${u.name} (${u.email}) - Plan: ${u.plan.toUpperCase()}`).join('\n');
+                    let reply = `Actualmente hay ${registeredUsers.length} usuario(s) registrado(s) en IAHAKER.COM:\n\n${userListText}`;
+                    chat.innerHTML += `<div class="message bot"><b>🛡️ [IAHAKER ADMIN CORE]:</b>\n${reply}</div>`;
+                    chat.scrollTop = chat.scrollHeight;
+                }, 400);
+                return;
+            }
+
             const loadingId = 'loading-' + Date.now();
             chat.innerHTML += `<div id="${loadingId}" class="message bot"><i>IAHAKER está pensando...</i></div>`;
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                // Conexión a API gratuita de IA para responder CUALQUIER pregunta de forma fluida
                 const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(text)}&format=json&no_html=1`);
                 const data = await res.json();
 
@@ -330,7 +373,7 @@
                 } else if(data.RelatedTopics && data.RelatedTopics.length > 0 && data.RelatedTopics[0].Text) {
                     reply = data.RelatedTopics[0].Text;
                 } else {
-                    reply = `He analizado tu consulta sobre "${text}". Como IA de IAHAKER.COM, estoy lista para ayudarte a solucionar dudas de código, comandos de terminal Linux, configuraciones de red o explicaciones generales.`;
+                    reply = `He procesado tu pregunta sobre "${text}". Como IA de IAHAKER.COM, estoy a tu disposición para ayudarte con código, terminal Linux y ciberseguridad.`;
                 }
 
                 document.getElementById(loadingId).remove();
@@ -344,7 +387,7 @@
                 chat.scrollTop = chat.scrollHeight;
             } catch (err) {
                 document.getElementById(loadingId).remove();
-                chat.innerHTML += `<div class="message bot"><b>IAHAKER AI:</b>\nRespuesta procesada para: "${text}". Sistema activo y operando 24/7.</div>`;
+                chat.innerHTML += `<div class="message bot"><b>IAHAKER AI:</b>\nRespuesta procesada para: "${text}".</div>`;
                 chat.scrollTop = chat.scrollHeight;
             }
         }

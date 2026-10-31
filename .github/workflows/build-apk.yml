@@ -30,7 +30,7 @@ jobs:
         cp index.html ia-project/public/index.html
         cd ia-project
         npm init -y
-        npm install @capacitor/cli @capacitor/core @capacitor/android
+        npm install --save-exact @capacitor/cli@latest @capacitor/core@latest @capacitor/android@latest
         npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
         npx cap add android
         cd android
@@ -99,7 +99,7 @@ jobs:
         TERMHTML
         cd term-project
         npm init -y
-        npm install @capacitor/cli @capacitor/core @capacitor/android
+        npm install --save-exact @capacitor/cli@latest @capacitor/core@latest @capacitor/android@latest
         npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
         npx cap add android
         cd android

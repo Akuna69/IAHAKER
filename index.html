@@ -30,11 +30,14 @@
         .price { color: #22c55e; font-weight: bold; }
         
         /* Terminal de Kali Linux */
-        #kali-terminal { background: #050508; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 240px; box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.2); margin-top: 10px; }
+        #kali-terminal { background: #050508; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 220px; box-shadow: inset 0 0 10px rgba(124, 58, 237, 0.2); margin-top: 10px; }
         #kali-output { flex: 1; overflow-y: auto; font-size: 11px; color: #22c55e; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; word-break: break-all; }
         .kali-prompt-line { display: flex; align-items: center; gap: 6px; border-top: 1px solid #1f2231; padding-top: 6px; }
         .kali-prompt-line span { color: #ef4444; font-weight: bold; font-size: 11px; }
         .kali-prompt-line input { background: transparent; border: none; color: #e1e1e6; font-family: monospace; outline: none; flex: 1; font-size: 11px; }
+
+        /* Lista de usuarios registrados para Admin */
+        .user-item { background: #09090b; border: 1px solid #3f3f46; padding: 8px; border-radius: 6px; margin-top: 6px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -81,7 +84,7 @@
         </div>
 
         <div id="pricing-section">
-            <!-- Sección de Planes en USDT para usuarios normales -->
+            <!-- Planes en USDT para usuarios normales -->
             <div id="userPlansContainer">
                 <div class="card">
                     <h3>Sistema Simple</h3>
@@ -108,13 +111,18 @@
                 </div>
             </div>
 
-            <!-- Panel Admin con Terminal de Kali Linux (Solo visible para Xirox) -->
+            <!-- Panel Admin con Terminal de Kali Linux y Lista de Usuarios Registrados -->
             <div id="adminPanelContainer"></div>
         </div>
     </div>
 
     <script>
-        let currentUser = { name: '', isAdmin: false, plan: 'simple' };
+        // Memoria global de usuarios registrados en el sistema
+        let registeredUsers = [
+            { name: "Xirox", email: "yerandysff@gmail.com", country: "Cuba", plan: "admin" }
+        ];
+
+        let currentUser = { name: '', email: '', isAdmin: false, plan: 'simple' };
         let activePlanKey = 'simple';
         const countries = ["Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán", "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benin", "Bielorrusia", "Bolivia", "Bosnia-Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Congo", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Etiopía", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabón", "Gambia", "Georgia", "Ghana", "Grecia", "Guatemala", "Guinea", "Haití", "Honduras", "Hungría", "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Israel", "Italia", "Jamaica", "Japón", "Jordania", "Kazajistán", "Kenia", "Kuwait", "Laos", "Letonia", "Líbano", "Libia", "Lituania", "Luxemburgo", "Madagascar", "Malasia", "Malawi", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique", "Namibia", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda", "Omán", "Países Bajos", "Pakistán", "Palestina", "Panamá", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Checa", "República Dominicana", "Rumanía", "Rusia", "San Marino", "Senegal", "Serbia", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Suecia", "Suiza", "Surinam", "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Túnez", "Turquía", "Ucrania", "Uganda", "Uruguay", "Uzbekistán", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue"];
         
@@ -143,7 +151,15 @@
             const country = document.getElementById('regCountry').value;
             
             if(!user || !email || !pass || !country) return alert('Rellena todos los campos.');
+
+            // Guardar usuario en la lista global
+            if(!registeredUsers.some(u => u.email === email)) {
+                registeredUsers.push({ name: user, email: email, country: country, plan: 'simple' });
+            }
+
             currentUser.name = user;
+            currentUser.email = email;
+
             if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
                 setAdminMode();
             } else {
@@ -160,11 +176,16 @@
 
             if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
                 currentUser.name = "Xirox";
+                currentUser.email = email;
                 setAdminMode();
             } else {
                 currentUser.name = email.split('@')[0];
+                currentUser.email = email;
                 currentUser.isAdmin = false;
                 currentUser.plan = 'simple';
+                if(!registeredUsers.some(u => u.email === email)) {
+                    registeredUsers.push({ name: currentUser.name, email: email, country: "Global", plan: 'simple' });
+                }
                 openAppSession();
             }
         }
@@ -175,12 +196,26 @@
             document.getElementById('userStatus').innerText = "🛡️ ADMIN XIROX";
             document.getElementById('headerTitle').innerText = "🛡️ PANEL XIROX";
             
-            // Ocultar planes normales y mostrar Terminal Kali Linux
             document.getElementById('userPlansContainer').style.display = 'none';
+            renderAdminPanel();
+            openAppSession();
+        }
+
+        function renderAdminPanel() {
+            let usersHTML = '';
+            registeredUsers.forEach(u => {
+                usersHTML += `
+                    <div class="user-item">
+                        <div><b>${u.name}</b> (${u.country})<br><span style="color:#a1a1aa; font-size:10px;">${u.email}</span></div>
+                        <span style="color: ${u.plan === 'admin' ? '#7c3aed' : (u.plan === 'simple' ? '#22c55e' : '#3b82f6')}; font-weight:bold;">${u.plan.toUpperCase()}</span>
+                    </div>
+                `;
+            });
+
             document.getElementById('adminPanelContainer').innerHTML = `
                 <div class="card" style="border-color:#7c3aed;">
                     <h3>Panel Admin Xirox</h3>
-                    <p>Acceso Ilimitado 24/7</p>
+                    <p style="font-size:11px; color:#22c55e; margin:0;">Acceso Ilimitado 24/7</p>
                 </div>
                 <div class="card" style="border-color:#7c3aed;">
                     <h3>🛡️ Terminal Kali Linux</h3>
@@ -195,8 +230,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="card" style="border-color:#7c3aed;">
+                    <h3>👥 Usuarios Registrados</h3>
+                    <div style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+                        ${usersHTML}
+                    </div>
+                </div>
             `;
-            openAppSession();
         }
 
         function handleKaliCommand(e) {
@@ -211,24 +251,22 @@
                 let resp = "";
                 const c = cmd.toLowerCase();
                 if(c === 'help') {
-                    resp = "Comandos disponibles: nmap, whoami, uname -a, ifconfig, cat /etc/passwd, clear, reboot";
+                    resp = "Comandos: nmap, whoami, uname -a, users, clear";
                 } else if(c === 'whoami') {
                     resp = "root (Xirox - Superusuario)";
+                } else if(c === 'users') {
+                    resp = registeredUsers.map(u => `- ${u.name} (${u.email}) [Plan: ${u.plan.toUpperCase()}]`).join('\n');
                 } else if(c.startsWith('nmap')) {
-                    resp = "Starting Nmap scan on target... Host is up (0.002s latency). Port 80/tcp OPEN, Port 443/tcp OPEN (IAHAKER.COM)";
+                    resp = "Target up. Port 80/443 OPEN (IAHAKER.COM)";
                 } else if(c === 'uname -a') {
-                    resp = "Linux kali-iahaker 6.12.0-kali-amd64 #1 SMP PREEMPT_DYNAMIC Kali GNU/Linux x86_64";
-                } else if(c === 'ifconfig') {
-                    resp = "eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST> mtu 1500 inet 10.24.8.9 netmask 255.255.255.0 broadcast 10.24.8.255";
-                } else if(c === 'cat /etc/passwd') {
-                    resp = "root:x:0:0:root:/root:/bin/bash\nxirox:x:1000:1000:Xirox Admin,,,:/home/xirox:/bin/zsh";
+                    resp = "Linux kali-iahaker 6.12.0-kali-amd64 #1 SMP PREEMPT";
                 } else if(c === 'clear') {
                     output.innerHTML = '';
                     return;
                 } else if(c === '') {
                     resp = "";
                 } else {
-                    resp = `bash: ${cmd}: command not found. Type 'help' for available utilities.`;
+                    resp = `bash: ${cmd}: command not found.`;
                 }
 
                 if(resp) {
@@ -258,10 +296,15 @@
         function verifyPayment() {
             const txHash = document.getElementById('txHashInput').value.trim();
             if(!txHash) return alert('Introduce el Hash de la transacción.');
+            
             currentUser.plan = activePlanKey;
+            let found = registeredUsers.find(u => u.email === currentUser.email);
+            if(found) found.plan = activePlanKey;
+
             alert('¡Pago verificado y plan activado con éxito!');
             document.getElementById('paymentBox').style.display = 'none';
             document.getElementById('userStatus').innerText = `Modo: ${activePlanKey.toUpperCase()}`;
+            if(currentUser.isAdmin) renderAdminPanel();
         }
 
         function sendMessage() {

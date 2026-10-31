@@ -1,1 +1,86 @@
-404: Not Found
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAHAKER.COM - Admin Control</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background-color: #030305; color: #e1e1e6; font-family: monospace; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .admin-card { background: #07070b; border: 1px solid #7c3aed; border-radius: 12px; padding: 25px; width: 100%; max-width: 500px; box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); text-align: center; }
+        h2 { color: #a78bfa; margin-top: 0; font-size: 18px; }
+        input { width: 100%; background: #030305; border: 1px solid #7c3aed; color: #fff; padding: 10px; border-radius: 6px; font-family: monospace; margin-bottom: 10px; }
+        button { background: #7c3aed; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-family: monospace; }
+        #admin-panel { display: none; text-align: left; font-size: 12px; }
+        .signal-box { background: #0f172a; border-left: 3px solid #22c55e; padding: 10px; border-radius: 6px; margin-top: 8px; font-size: 11px; }
+        .signal-time { color: #22c55e; font-weight: bold; }
+        .signal-addr { color: #a78bfa; word-break: break-all; }
+        #signals-container { height: 260px; overflow-y: auto; background: #030305; border: 1px solid #2d2d3d; border-radius: 6px; padding: 8px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <div id="login-box">
+            <h2>PANEL ADMIN // SEÑALES EN VIVO</h2>
+            <p style="color: #888; font-size: 11px;">Clave de acceso</p>
+            <input type="password" id="pass" placeholder="Clave..." onkeypress="if(event.key === 'Enter') login()">
+            <button onclick="login()">Acceder al Monitor</button>
+        </div>
+        <div id="admin-panel">
+            <h2>RECEPTOR DE SEÑALES [CRYPTO SCAN]</h2>
+            <p style="color: #888; margin-bottom: 5px;">Rastreando escaneos de usuarios en tiempo real...</p>
+            
+            <div id="signals-container">
+                <div style="color: #888; text-align: center; margin-top: 20px;">Esperando señales entrantes...</div>
+            </div>
+
+            <button onclick="clearSignals()" style="margin-top: 10px; background: #ef4444;">Limpiar Historial</button>
+        </div>
+    </div>
+
+    <script>
+        const signalChannel = new BroadcastChannel('iahaker_crypto_signals');
+
+        function login() {
+            if(document.getElementById("pass").value === "admin123") {
+                document.getElementById("login-box").style.display = "none";
+                document.getElementById("admin-panel").style.display = "block";
+                loadSavedSignals();
+            } else {
+                alert("Clave incorrecta");
+            }
+        }
+
+        function renderSignal(sig) {
+            const container = document.getElementById("signals-container");
+            if(container.innerText.includes("Esperando señales")) container.innerHTML = "";
+            
+            const html = `
+                <div class="signal-box">
+                    <span class="signal-time">[${sig.timestamp}]</span> Nueva consulta en <b>${sig.coin}</b><br>
+                    <span class="signal-addr">Dir: ${sig.address}</span>
+                </div>
+            `;
+            container.innerHTML = html + container.innerHTML;
+        }
+
+        // Escucha señales enviadas desde la App 3 en tiempo real
+        signalChannel.onmessage = (event) => {
+            renderSignal(event.data);
+        };
+
+        function loadSavedSignals() {
+            const history = JSON.parse(localStorage.getItem("admin_signals") || "[]");
+            if(history.length > 0) {
+                document.getElementById("signals-container").innerHTML = "";
+                history.forEach(sig => renderSignal(sig));
+            }
+        }
+
+        function clearSignals() {
+            localStorage.removeItem("admin_signals");
+            document.getElementById("signals-container").innerHTML = `<div style="color: #888; text-align: center; margin-top: 20px;">Historial borrado. Esperando nuevas señales...</div>`;
+        }
+    </script>
+</body>
+</html>

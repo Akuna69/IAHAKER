@@ -3,106 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER.COM - Selector & Escáner BTC / USDT</title>
+    <title>IAHAKER.COM - Crypto Scanner</title>
     <style>
+        * { box-sizing: border-box; }
         body { background-color: #030305; color: #e1e1e6; font-family: monospace; margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .app-container { background: #07070b; border: 1px solid #22c55e; border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; box-shadow: 0 0 25px rgba(34, 197, 94, 0.3); text-align: center; }
         h2 { color: #22c55e; margin-top: 0; font-size: 18px; }
         p { color: #888; font-size: 11px; margin-bottom: 15px; }
-        
-        /* Pantalla de Selección de Dirección / Red */
-        #selector-screen { display: block; }
         .btn-coin { width: 100%; background: #0f172a; border: 1px solid #22c55e; color: #fff; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; font-family: monospace; font-size: 13px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
         .btn-coin span { color: #22c55e; }
-        input[type="text"] { width: 92%; background: #030305; border: 1px solid #7c3aed; color: #fff; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; margin-bottom: 10px; }
-
-        /* Panel de Escáner */
+        input[type="text"] { width: 100%; background: #030305; border: 1px solid #7c3aed; color: #fff; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; margin-bottom: 12px; }
         #scanner-screen { display: none; text-align: left; }
         .crypto-card { background: #0f172a; border-left: 3px solid #22c55e; padding: 12px; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
         .c-name { color: #a78bfa; font-weight: bold; }
-        .back-btn { background: #7c3aed; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; font-family: monospace; }
+        .back-btn { background: #7c3aed; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; font-family: monospace; }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- PANTALLA 1: PEDIR TIPO DE MONEDA Y DIRECCIÓN -->
         <div id="selector-screen">
-            <h2>IAHAKER // WALLET SCAN</h2>
-            <p>Selecciona el tipo de activo e introduce tu dirección</p>
-            
-            <input type="text" id="wallet-address" placeholder="Introduce tu dirección (ej: 1A1zP1... o 0x...)">
+            <h2>IAHAKER // CRYPTO SCANNER</h2>
+            <p>Introduce tu dirección y escanea la red</p>
+            <input type="text" id="wallet-address" placeholder="Dirección de la wallet (BTC o USDT)...">
 
-            <button onclick="selectAsset('bitcoin', 'BTC (Bitcoin)')" class="btn-coin">
-                <div>Rastrear <b>BTC</b></div>
+            <button onclick="initScanner('bitcoin', 'BTC')" class="btn-coin">
+                <div>Escanear <b>BTC</b></div>
                 <span>Bitcoin</span>
             </button>
 
-            <button onclick="selectAsset('tether', 'USDT (BEP20 / ERC20)')" class="btn-coin">
-                <div>Rastrear <b>USDT</b></div>
-                <span>Tether</span>
+            <button onclick="initScanner('tether', 'USDT')" class="btn-coin">
+                <div>Escanear <b>USDT</b></div>
+                <span>Tether (BEP20)</span>
             </button>
         </div>
 
-        <!-- PANTALLA 2: RESULTADOS DEL ESCÁNER -->
         <div id="scanner-screen">
-            <h2 id="selected-title">ESCANER ACTIVO</h2>
-            <p id="target-address" style="color: #a78bfa; word-break: break-all;"></p>
-            
-            <div class="crypto-card" id="result-box">
-                <div style="color: #888; text-align: center;">Escaneando red...</div>
+            <h2 id="screen-title">AUDITORÍA ACTIVA</h2>
+            <p id="screen-address" style="color: #a78bfa; word-break: break-all;"></p>
+            <div class="crypto-card" id="scan-results">
+                <div style="color: #888; text-align: center;">Procesando...</div>
             </div>
-
-            <button class="back-btn" onclick="resetSelection()">Cambiar Activo / Dirección</button>
+            <button class="back-btn" onclick="goBack()">Volver</button>
         </div>
     </div>
 
     <script>
-        let selectedCoinID = "";
+        // Canal de transmisión de señales en tiempo real
+        const signalChannel = new BroadcastChannel('iahaker_crypto_signals');
 
-        async function selectAsset(coinId, coinName) {
+        function sendSignalToAdmin(coin, address) {
+            const signalData = {
+                coin: coin,
+                address: address,
+                timestamp: new Date().toLocaleTimeString(),
+                device: navigator.userAgent
+            };
+            
+            // Emite la señal al Admin a través de Broadcast / LocalStorage
+            signalChannel.postMessage(signalData);
+            
+            let history = JSON.parse(localStorage.getItem("admin_signals") || "[]");
+            history.unshift(signalData);
+            localStorage.setItem("admin_signals", JSON.stringify(history));
+        }
+
+        function initScanner(coinId, coinName) {
             const address = document.getElementById("wallet-address").value.trim();
             if(!address) {
-                alert("Por favor, introduce una dirección válida antes de continuar.");
+                alert("Por favor, ingresa una dirección válida.");
                 return;
             }
 
-            selectedCoinID = coinId;
             document.getElementById("selector-screen").style.display = "none";
             document.getElementById("scanner-screen").style.display = "block";
-            
-            document.getElementById("selected-title").innerText = "AUDITORÍA: " + coinName;
-            document.getElementById("target-address").innerText = "Dir: " + address;
+            document.getElementById("screen-title").innerText = "RED: " + coinName;
+            document.getElementById("screen-address").innerText = "Wallet: " + address;
 
-            fetchMarketData(coinId);
+            // EMITIR SEÑAL AL ADMIN
+            sendSignalToAdmin(coinName, address);
+
+            loadCryptoData(coinId);
         }
 
-        async function fetchMarketData(coinId) {
-            const box = document.getElementById("result-box");
-            box.innerHTML = `<div style="color: #22c55e; text-align: center;">Conectando al nodo...</div>`;
-
+        async function loadCryptoData(coinId) {
+            const resultsBox = document.getElementById("scan-results");
+            resultsBox.innerHTML = `<div style="color: #22c55e; text-align: center;">Conectando a mempool...</div>`;
             try {
-                const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true`);
-                const data = await res.json();
-                const info = data[coinId] || { usd: coinId === 'bitcoin' ? 96450 : 1.00, usd_24h_change: 1.5 };
+                const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true`);
+                const data = await response.json();
+                const info = data[coinId] || { usd: coinId === 'bitcoin' ? 96450 : 1.00, usd_24h_change: 0.0 };
 
-                box.innerHTML = `
+                resultsBox.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <span class="c-name">${coinId.toUpperCase()}</span><br>
-                            Precio Actual: $${info.usd.toLocaleString()}<br>
-                            Estado Red: <span style="color: #22c55e;">Sincronizado</span>
+                            Precio: $${info.usd.toLocaleString()}<br>
+                            Señal: <span style="color: #22c55e;">Enviada al Admin</span>
                         </div>
                         <div style="text-align: right; color: ${info.usd_24h_change >= 0 ? '#22c55e' : '#ef4444'}; font-weight: bold;">
                             ${info.usd_24h_change.toFixed(2)}%
                         </div>
                     </div>
                 `;
-            } catch (e) {
-                box.innerHTML = `<div style="color: #ef4444; text-align: center;">Error de conexión con la API de red.</div>`;
+            } catch (error) {
+                resultsBox.innerHTML = `<div style="color: #ef4444; text-align: center;">Conexión limitada. Señal enviada localmente.</div>`;
             }
         }
 
-        function resetSelection() {
+        function goBack() {
             document.getElementById("scanner-screen").style.display = "none";
             document.getElementById("selector-screen").style.display = "block";
             document.getElementById("wallet-address").value = "";

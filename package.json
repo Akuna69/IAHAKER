@@ -1,15 +1,15 @@
 {
-  "name": "iahaker",
+  "name": "iahaker-desktop",
   "version": "1.0.0",
-  "description": "IAHAKER.COM 24/7",
-  "main": "api/index.js",
+  "description": "IAHAKER.COM Desktop Client",
+  "main": "main.js",
   "scripts": {
-    "start": "node api/index.js"
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac"
   },
-  "dependencies": {
-    "@capacitor/android": "^8.6.0",
-    "@capacitor/cli": "^8.6.0",
-    "@capacitor/core": "^8.6.0",
-    "express": "^4.19.2"
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0"
   }
 }

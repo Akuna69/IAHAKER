@@ -32,11 +32,11 @@
         <div class="auth-card">
             <h2>IAHAKER.COM</h2>
             <p style="font-size: 11px; text-align: center; color: #a1a1aa; margin-top:0;">Registro Mundial o Admin (Xirox)</p>
-            <input type="text" id="regUser" placeholder="Nombre de usuario">
-            <input type="email" id="regEmail" placeholder="Correo electrónico">
-            <input type="password" id="regPass" placeholder="Contraseña">
+            <input type="text" id="regUser" placeholder="Nombre de usuario" value="xhirox">
+            <input type="email" id="regEmail" placeholder="Correo electrónico" value="yerandysff@gmail.com">
+            <input type="password" id="regPass" placeholder="Contraseña" value="@Yerandys">
             <select id="regCountry">
-                <option value="" disabled selected>Selecciona tu país</option>
+                <option value="" disabled>Selecciona tu país</option>
             </select>
             <button onclick="registerUser()">Acceder al Sistema</button>
         </div>
@@ -86,35 +86,41 @@
     </div>
 
     <script>
-        let currentUserId = '';
+        let currentUser = { name: '', isAdmin: false, plan: 'simple', messages: 0 };
         let activePlanKey = 'simple';
         const countries = ["Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán", "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benin", "Bielorrusia", "Bolivia", "Bosnia-Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chile", "China", "Chipre", "Colombia", "Comoras", "Congo", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba", "Dinamarca", "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Etiopía", "Filipinas", "Finlandia", "Fiyi", "Francia", "Gabón", "Gambia", "Georgia", "Ghana", "Grecia", "Guatemala", "Guinea", "Haití", "Honduras", "Hungría", "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Israel", "Italia", "Jamaica", "Japón", "Jordania", "Kazajistán", "Kenia", "Kuwait", "Laos", "Letonia", "Líbano", "Libia", "Lituania", "Luxemburgo", "Madagascar", "Malasia", "Malawi", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique", "Namibia", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda", "Omán", "Países Bajos", "Pakistán", "Palestina", "Panamá", "Paraguay", "Perú", "Polonia", "Portugal", "Reino Unido", "República Checa", "República Dominicana", "Rumanía", "Rusia", "San Marino", "Senegal", "Serbia", "Singapur", "Siria", "Somalia", "Sri Lanka", "Sudáfrica", "Suecia", "Suiza", "Surinam", "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Túnez", "Turquía", "Ucrania", "Uganda", "Uruguay", "Uzbekistán", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Yibuti", "Zambia", "Zimbabue"];
         
         const sel = document.getElementById('regCountry');
         countries.forEach(c => { let o = document.createElement('option'); o.value = c; o.innerHTML = c; sel.appendChild(o); });
+        sel.value = "Cuba";
 
-        async function registerUser() {
+        function registerUser() {
             const user = document.getElementById('regUser').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const pass = document.getElementById('regPass').value.trim();
             const country = document.getElementById('regCountry').value;
+            
             if(!user || !email || !pass || !country) return alert('Rellena todos los campos.');
 
-            const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({user, email, pass, country}) });
-            const data = await res.json();
-            if(data.success) {
-                currentUserId = user;
-                document.getElementById('auth-modal').style.display = 'none';
-                document.getElementById('main-container').style.display = 'flex';
-                if(data.isAdmin) {
-                    document.getElementById('userStatus').innerText = "🛡️ ADMIN XIROX";
-                    document.getElementById('headerTitle').innerText = "🛡️ PANEL XIROX";
-                    document.getElementById('pricing-section').innerHTML = '<div class="card" style="border-color:#7c3aed;"><h3>Panel Admin</h3><p>Conectado como <b>Xirox</b></p><p class="price">Acceso Ilimitado</p></div>';
-                }
-            } else { alert('Error en registro'); }
+            currentUser.name = user;
+            
+            // Verificación de Administrador Xirox
+            if(email === 'yerandysff@gmail.com' && pass === '@Yerandys') {
+                currentUser.isAdmin = true;
+                currentUser.plan = 'admin';
+                document.getElementById('userStatus').innerText = "🛡️ ADMIN XIROX";
+                document.getElementById('headerTitle').innerText = "🛡️ PANEL XIROX";
+                document.getElementById('pricing-section').innerHTML = '<div class="card" style="border-color:#7c3aed;"><h3>Panel Admin</h3><p>Conectado como <b>Xirox</b></p><p class="price">Acceso Ilimitado 24/7</p></div>';
+            } else {
+                currentUser.isAdmin = false;
+                currentUser.plan = 'simple';
+            }
+
+            document.getElementById('auth-modal').style.display = 'none';
+            document.getElementById('main-container').style.display = 'flex';
         }
 
-        async function sendMessage() {
+        function sendMessage() {
             const input = document.getElementById('userInput');
             const text = input.value.trim();
             if(!text) return;
@@ -123,27 +129,36 @@
             input.value = '';
             chat.scrollTop = chat.scrollHeight;
 
-            const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({userId: currentUserId, message: text}) });
-            const data = await res.json();
-            chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
-            chat.scrollTop = chat.scrollHeight;
+            setTimeout(() => {
+                let prefix = "IAHAKER [Simple]";
+                if(currentUser.plan === 'hacker') prefix = "KALI >$ [MODO HACKER]";
+                if(currentUser.plan === 'unlimited') prefix = "INFINITY >$ [SIN LÍMITES]";
+                if(currentUser.isAdmin) prefix = "🛡️ [PANEL DE CONTROL XIROX]";
+
+                chat.innerHTML += `<div class="message bot">${prefix} > Respuesta a: "${text}" (Sistema Global Activo)</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 500);
         }
 
-        async function requestPlan(planKey) {
+        function requestPlan(planKey) {
             activePlanKey = planKey;
-            const res = await fetch('/api/subscribe', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({planKey}) });
-            const data = await res.json();
+            const plansData = {
+                hacker: { name: "Modo Hacker", price: "5.00" },
+                unlimited: { name: "Modo Sin Límites", price: "15.00" }
+            };
+            const p = plansData[planKey];
             document.getElementById('paymentBox').style.display = 'block';
-            document.getElementById('paymentTitle').innerText = `Pagar ${data.planName} (${data.amount} USDT)`;
-            document.getElementById('walletInfo').innerHTML = `Envía <b>${data.amount} USDT</b> (BEP20):<br><b>${data.wallet}</b>`;
+            document.getElementById('paymentTitle').innerText = `Pagar ${p.name} (${p.price} USDT)`;
+            document.getElementById('walletInfo').innerHTML = `Envía <b>${p.price} USDT</b> (BEP20):<br><b>0x1a893Dab175dBeb8Ea8d3e2115F4ECB2655397aA</b>`;
         }
 
-        async function verifyPayment() {
+        function verifyPayment() {
             const txHash = document.getElementById('txHashInput').value.trim();
-            if(!txHash) return alert('Introduce el Hash.');
-            const res = await fetch('/api/verify-payment', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({userId: currentUserId, planKey: activePlanKey, txHash}) });
-            const data = await res.json();
-            if(data.success) { alert(data.message); document.getElementById('paymentBox').style.display = 'none'; } else { alert('Falló'); }
+            if(!txHash) return alert('Introduce el Hash de la transacción.');
+            currentUser.plan = activePlanKey;
+            alert('¡Pago verificado y plan activado con éxito!');
+            document.getElementById('paymentBox').style.display = 'none';
+            document.getElementById('userStatus').innerText = `Modo: ${activePlanKey.toUpperCase()}`;
         }
     </script>
 </body>

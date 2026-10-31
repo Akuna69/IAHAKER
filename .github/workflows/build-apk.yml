@@ -29,21 +29,8 @@ jobs:
         mkdir -p ia-project/public
         cp index.html ia-project/public/index.html
         cd ia-project
-        cat << 'PKG' > package.json
-        {
-          "name": "ia-project",
-          "version": "1.0.0",
-          "private": true,
-          "dependencies": {
-            "@capacitor/android": "^7.0.0",
-            "@capacitor/core": "^7.0.0",
-            "@capacitor/cli": "^7.0.0"
-          }
-        }
-        PKG
-        npm install --omit=dev --audit=false --fund=false
-        npx cap init IAHAKER.AI com.iahaker.ai --web-dir public --force
-        npx cap add android
+        npx --yes @capacitor/cli@latest init IAHAKER.AI com.iahaker.ai --web-dir public --force
+        npx --yes @capacitor/cli@latest add android
         cd android
         chmod +x gradlew
         ./gradlew assembleDebug
@@ -109,21 +96,8 @@ jobs:
         </html>
         TERMHTML
         cd term-project
-        cat << 'PKG' > package.json
-        {
-          "name": "term-project",
-          "version": "1.0.0",
-          "private": true,
-          "dependencies": {
-            "@capacitor/android": "^7.0.0",
-            "@capacitor/core": "^7.0.0",
-            "@capacitor/cli": "^7.0.0"
-          }
-        }
-        PKG
-        npm install --omit=dev --audit=false --fund=false
-        npx cap init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
-        npx cap add android
+        npx --yes @capacitor/cli@latest init IAHAKER.Terminal com.iahaker.terminal --web-dir public --force
+        npx --yes @capacitor/cli@latest add android
         cd android
         chmod +x gradlew
         ./gradlew assembleDebug

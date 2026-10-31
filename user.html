@@ -3,35 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IAHAKER.COM - AI Executive Assistant</title>
+    <title>IAHAKER.COM - Universal AI Core & Terminal Base</title>
     <style>
-        body { background-color: #050508; color: #e1e1e6; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        body { background-color: #050508; color: #e1e1e6; font-family: monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
         header { border-bottom: 1px solid #7c3aed; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         h1 { color: #a78bfa; font-size: 14px; margin: 0; }
         .chat-container { flex: 1; display: flex; flex-direction: column; background: #0b0c10; border: 1px solid #1f2231; border-radius: 8px; padding: 10px; overflow: hidden; box-shadow: inset 0 0 15px rgba(124, 58, 237, 0.15); }
-        #chat-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; font-size: 13px; }
-        .msg { padding: 10px; border-radius: 6px; line-height: 1.4; word-break: break-word; }
+        #chat-output { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; font-size: 12px; }
+        .msg { padding: 10px; border-radius: 6px; line-height: 1.4; word-break: break-word; white-space: pre-line; }
         .msg.user { background: #7c3aed; color: white; align-self: flex-end; max-width: 85%; }
-        .msg.ai { background: #151821; border-left: 3px solid #a78bfa; align-self: flex-start; max-width: 90%; }
+        .msg.ai { background: #151821; border-left: 3px solid #22c55e; align-self: flex-start; max-width: 95%; }
         .input-area { display: flex; gap: 6px; }
-        .input-area input { flex: 1; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 9px; border-radius: 6px; outline: none; }
-        .input-area button { background: #7c3aed; color: white; border: none; padding: 9px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .input-area input { flex: 1; background: #000; border: 1px solid #3f3f46; color: #fff; padding: 9px; border-radius: 6px; outline: none; font-family: monospace; }
+        .input-area button { background: #7c3aed; color: white; border: none; padding: 9px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: monospace; }
     </style>
 </head>
 <body>
     <header>
-        <h1>🧠 IAHAKER.COM [AI CORE]</h1>
-        <span style="font-size: 11px; color: #22c55e;">● Online</span>
+        <h1>🧠 IAHAKER [UNIVERSAL AI & PACKAGES CORE]</h1>
+        <span style="font-size: 11px; color: #22c55e;">● Base de Datos Total Activa</span>
     </header>
 
     <div class="chat-container">
         <div id="chat-output">
             <div class="msg ai">
-                <strong>[IAHAKER EXECUTIVE]:</strong> Sistemas operativos enlazados. Asistente de negocios y análisis estratégico listo. ¿Cuál es su consulta u objetivo?
+<strong>[IAHAKER CORE DATABASE INITIALIZED]:</strong>
+Sistemas de paquetes, librerías y terminal cargados al 100%. 
+Puedo proveerte comandos de instalación, paquetes de Node.js, Python, APT, scripts de Termux, librerías y bases de datos completas. 
+¿Qué paquete o estructura deseas desplegar hoy?
             </div>
         </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Escriba su consulta ejecutiva..." onkeydown="handleEnter(event)">
+            <input type="text" id="userInput" placeholder="Ej: dame paquetes de python, comandos nmap, librerias node..." onkeydown="handleEnter(event)">
             <button onclick="sendMessage()">Enviar</button>
         </div>
     </div>
@@ -46,20 +49,58 @@
             input.value = '';
 
             setTimeout(() => {
-                let response = generateExecutiveResponse(text);
-                output.innerHTML += `<div class="msg ai"><strong>[IAHAKER EXECUTIVE]:</strong><br>${response}</div>`;
+                let response = generateUniversalDatabaseResponse(text);
+                output.innerHTML += `<div class="msg ai"><strong>[IAHAKER DATABASE]:</strong>\n${response}</div>`;
                 output.scrollTop = output.scrollHeight;
             }, 400);
         }
 
         function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
 
-        function generateExecutiveResponse(query) {
-            return `<strong>Análisis Estratégico:</strong> "${query}"<br>` +
-                   `• <strong>Opciones viables:</strong><br>` +
-                   `  1. Ejecución directa mediante automatización de procesos.<br>` +
-                   `  2. Reestructuración de parámetros operativos.<br>` +
-                   `<em>Especifique métricas o datos exactos para proceder con la ejecución inmediata.</em>`;
+        function generateUniversalDatabaseResponse(query) {
+            const q = query.toLowerCase();
+            
+            if(q.includes('python') || q.includes('pip') || q.includes('libreria')) {
+                return `📦 **Base de Paquetes Python & Librerías Esenciales:**\n` +
+                       `• **Instalación base:** pkg install python python-pip\n` +
+                       `• **Librerías de Red / Web:**\n` +
+                       `  - pip install requests beautifulsoup4 flask fastapi uvicorn\n` +
+                       `• **Librerías de Datos / IA:**\n` +
+                       `  - pip install numpy pandas scikit-learn torch\n` +
+                       `• **Seguridad / Ciberseguridad:**\n` +
+                       `  - pip install scapy pwntools paramiko impacket`;
+            } 
+            else if(q.includes('node') || q.includes('npm') || q.includes('javascript') || q.includes('js')) {
+                return `📦 **Base de Paquetes Node.js & Entorno JS:**\n` +
+                       `• **Instalación base:** pkg install nodejs\n` +
+                       `• **Frameworks y Servidores:**\n` +
+                       `  - npm install express cors dotenv nodemon\n` +
+                       `• **Herramientas CLI y Utilidades:**\n` +
+                       `  - npm install -g typescript ts-node pm2\n` +
+                       `• **Base de Datos / ORM:**\n` +
+                       `  - npm install mongoose pg sqlite3 prisma`;
+            } 
+            else if(q.includes('termux') || q.includes('pkg') || q.includes('apt') || q.includes('terminal')) {
+                return `⚙️ **Base de Comandos y Paquetes de Terminal (Termux / Linux):**\n` +
+                       `• **Actualización total:** pkg update && pkg upgrade -y\n` +
+                       `• **Herramientas de Red:** pkg install nmap curl wget netcat tcpdump git -y\n` +
+                       `• **Editores y Compiladores:** pkg install nano vim clang make cmake python golang rust -y\n` +
+                       `• **Almacenamiento:** termux-setup-storage (Para dar permisos de archivos)`;
+            } 
+            else if(q.includes('base de dato') || q.includes('sql') || q.includes('db')) {
+                return `🗄️ **Base de Datos & Motores de Almacenamiento:**\n` +
+                       `• **SQLite3 (Local liviano):** pkg install sqlite\n` +
+                       `• **PostgreSQL:** pkg install postgresql\n` +
+                       `• **MariaDB / MySQL:** pkg install mariadb\n` +
+                       `• **Estructura JSON Local:** Almacenamiento mediante JavaScript nativo con \`localStorage\` o archivos \`.json\` cifrados.`;
+            } 
+            else {
+                return `🔍 **Resultado de Búsqueda Global para:** "${query}"\n` +
+                       `• **Paquetes sugeridos:** Actualización de repositorios y dependencias.\n` +
+                       `• **Comando de despliegue rápido:**\n` +
+                       `  \`pkg update && pkg install git python nodejs curl -y\`\n` +
+                       `• **Estado del sistema:** Base de datos universal vinculada y lista para ejecutar cualquier script o librería que solicites. Especifique un lenguaje o herramienta particular si requiere código fuente completo.`;
+            }
         }
     </script>
 </body>
